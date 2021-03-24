@@ -81,7 +81,6 @@ int get(int tree_l, int h, int arr_l, int arr_r, int value) {
         return (arr_l + arr_r) / 2;
     }
 
-    //update bottom tree
     int bottom_tree_h = next_power_of_2(ceil(h / 2.0));
     int top_tree_h = h - bottom_tree_h;
 
