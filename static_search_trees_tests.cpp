@@ -1,34 +1,64 @@
 #include <iostream>
 #include <stdlib.h>
-#include <static_search_trees.h>
+#include "static-search-trees.h"
 #include <time.h>
 
 using namespace std;
 
+void print_array(int *a, int n) {
+    printf("Array of length: %d\n", n);
+    for (int i = 0; i < n; ++i){
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+}
+
 void test_get_update_1() {
     // Test with a tree of size 15.
-    CO_static_search_tree tree = CO_static_search_tree(15);
-    tree.update(13, 200);
-    if (tree.get(13) != 200) {
-        cout << "test_get_update_1 failed: expected 200 at index 13." << endl;
+    int n = 15;
+    CO_static_search_tree tree(n);
+    int a[15];
+    a[0] = rand() % 10;
+    for (int i = 1; i < n; ++i) {
+        a[i] = a[i - 1] + rand() % 10;
+        tree.update(i, a[i]);
+    }
+
+    for (int i = 0; i < n; ++i) {
+        tree.update(i, a[i]);
+    }
+
+    int index;
+
+    index = tree.get(a[13]);
+    if (index != 13)
+    {
+        print_array(a, n);
+        printf("test_get_update_1 failed: expected %d at index 13, got: %d\n", a[13], index);
         return;
     }
-    tree.update(5, 24);
-    if (tree.get(5) != 24) {
-        cout << "test_get_update_1 failed: expected 24 at index 5." << endl;
+
+    index = tree.get(a[5]);
+    if (index != 5)
+    {
+        print_array(a, n);
+        printf("test_get_update_1 failed: expected %d at index 5, got: %d\n", a[5], index);
         return;
     }
-    tree.update(0, 10);
-    if (tree.get(0) != 10) {
-        cout << "test_get_update_1 failed: expected 10 at index 0." << endl;
+
+    index = tree.get(a[0]);
+    if (index != 0)
+    {
+        print_array(a, n);
+        printf("test_get_update_1 failed: expected %d at index 0, got: %d\n", a[0], index);
         return;
     }
-    tree.update(13, 55);
-    if (tree.get(13) != 55) {
-        cout << "test_get_update_1 failed: expected 55 at index 13." << endl;
-        return;
-    } else if (tree.get(5) != 24 || tree.get(0) != 10) {
-        cout << "test_get_update_1 failed: modified values at incorrect indices." << endl;
+
+    index = tree.get(a[13]);
+    if (index != 13)
+    {
+        print_array(a, n);
+        printf("test_get_update_1 failed: expected %d at index 13, got: %d\n", a[13], index);
         return;
     }
     cout << "test_get_update_1: OK" << endl;
@@ -36,19 +66,19 @@ void test_get_update_1() {
 
 void test_get_update_2() {
     // Test edge case with a tree of size 1.
-    CO_static_search_tree tree = CO_static_search_tree(1);
+    CO_static_search_tree tree(1);
     tree.update(0, 2);
-    if (tree.get(0) != 2) {
+    if (tree.get(2) != 0) {
         cout << "test_get_update_2 failed: expected 2 at index 0." << endl;
         return;
     }
     tree.update(0, 5);
-    if (tree.get(0) != 5) {
+    if (tree.get(5) != 0) {
         cout << "test_get_update_2 failed: expected 5 at index 0." << endl;
         return;
     }
     tree.update(0, 501);
-    if (tree.get(0) != 501) {
+    if (tree.get(501) != 0) {
         cout << "test_get_update_2 failed: expected 501 at index 0." << endl;
         return;
     }
@@ -64,7 +94,7 @@ void test_get_update_3() {
         // limit size to the range [0...10000]
         // no point in doing more.
         int t_size = 1 + rand() % 10000;
-        CO_static_search_tree tree = CO_static_search_tree(t_size);
+        CO_static_search_tree tree(t_size);
         for (int j = 0; j < t_size; j++) {
             tree.update(j, j);
         }
@@ -87,7 +117,7 @@ void test_get_update_4() {
         // limit size to the range [0...10000]
         // no point in doing more.
         int t_size = 1 + rand() % 10000;
-        CO_static_search_tree tree = CO_static_search_tree(t_size);
+        CO_static_search_tree tree(t_size);
         for (int j = 0; j < t_size; j++) {
             tree.update(j, j);
         }
@@ -96,7 +126,7 @@ void test_get_update_4() {
             tree.update(j, j*j);
         }
         for (int j = 0; j < t_size; j++) {
-            if (tree.get(j) != j*j) {
+            if (tree.get(j * j) != j) {
                 cout << "test_get_update_4 failed: expected value " << j*j << " at index " << j << ", tree size: " << t_size << endl;
                 return;
             }
