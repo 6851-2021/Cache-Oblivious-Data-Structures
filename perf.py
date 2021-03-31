@@ -40,7 +40,7 @@ class PerfObj:
 if __name__ == '__main__':
     if len(argv) > 1:
         perf = PerfObj()
-        for i in range(2):
+        for i in range(1):
             perf.record_cache(argv[1])
         print(perf) 
     else:
