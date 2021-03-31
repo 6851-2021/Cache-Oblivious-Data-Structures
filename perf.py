@@ -38,14 +38,11 @@ class PerfObj:
         return self.df
 
 if __name__ == '__main__':
-    #can pass folder name in first argument
     if len(argv) > 1:
         perf = PerfObj()
-        perf.record_cache(argv[1])
-        perf.record_cache(argv[1])
-        # get_cache_misses(perf_stat)
-        print(perf)
-        
+        for i in range(2):
+            perf.record_cache(argv[1])
+        print(perf) 
     else:
         print("Usage python perf.py <program>")
     
