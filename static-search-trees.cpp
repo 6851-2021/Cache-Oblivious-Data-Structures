@@ -25,6 +25,9 @@ CO_static_search_tree::CO_static_search_tree(int n) {
     this->size = this->length * 2;
     this->height = log2(this->length) + 1;
     this->tree = (int *)malloc(sizeof(int) * this->size);
+
+    this->nodes_touched_overall = 0;
+    this->nodes_touched_during_query = 0;
 }
 
 CO_static_search_tree::~CO_static_search_tree() {
@@ -36,16 +39,20 @@ int CO_static_search_tree::update(int tree_l, int h, int arr_l, int arr_r, int i
     if (h == 1)
     {
         this->tree[tree_l] = value;
+        this->nodes_touched_during_query++;
         return value;
     }
     if(h == 2) {
         if(index < (arr_l + arr_r) / 2) {
             this->tree[tree_l + 1] = value;
+            this->nodes_touched_during_query++;
         } else {
-            this->tree[tree_l + 2] = value;   
+            this->tree[tree_l + 2] = value;
+            this->nodes_touched_during_query++;   
         }
         //merge
         this->tree[tree_l] = this->merge(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+        this->nodes_touched_during_query++;
         return this->tree[tree_l];
     }
 
@@ -70,8 +77,10 @@ int CO_static_search_tree::update(int tree_l, int h, int arr_l, int arr_r, int i
     int adjacent_child_value;
     if(bottom_tree_index % 2 == 0) {
         adjacent_child_value = this->tree[bottom_tree_tree_l + bottom_tree_size];
+        this->nodes_touched_during_query++;
     } else {
         adjacent_child_value = this->tree[bottom_tree_tree_l - bottom_tree_size];
+        this->nodes_touched_during_query++;
     }
 
     //merge two children value
@@ -84,7 +93,9 @@ int CO_static_search_tree::update(int tree_l, int h, int arr_l, int arr_r, int i
 }
 
 void CO_static_search_tree::update(int index, int value) {
+    this->nodes_touched_during_query = 0;
     this->update(0, this->height, 0, this->length, index, value);
+    this->nodes_touched_overall += this->nodes_touched_during_query;
 }
 
 int CO_static_search_tree::get(int tree_l, int h, int arr_l, int arr_r, int value) {
@@ -93,6 +104,7 @@ int CO_static_search_tree::get(int tree_l, int h, int arr_l, int arr_r, int valu
         return arr_l;
     }
     if(h == 2) {
+        this->nodes_touched_during_query++;
         if(value <= this->tree[tree_l + 1])
             return arr_l;
         return (arr_l + arr_r) / 2;
@@ -114,6 +126,8 @@ int CO_static_search_tree::get(int tree_l, int h, int arr_l, int arr_r, int valu
     int bottom_tree_arr_l = arr_l + bottom_tree_index * bottom_tree_range_length;
     int bottom_tree_arr_r = bottom_tree_arr_l + bottom_tree_range_length;
 
+    
+    this->nodes_touched_during_query++;
     if(value <= tree[bottom_tree_tree_l]) {
         return get(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_arr_r, value);
     }
@@ -127,8 +141,13 @@ int CO_static_search_tree::get(int tree_l, int h, int arr_l, int arr_r, int valu
 }
 
 int CO_static_search_tree::get(int value) {
-    return this->get(0, this->height, 0, this->length, value);
+    this->nodes_touched_during_query = 0;
+    int result =  this->get(0, this->height, 0, this->length, value);
+    this->nodes_touched_overall += this->nodes_touched_during_query;
+    return result;
 }
+
+long long CO_static_search_tree::get_num_of_touched_nodes() { return this->nodes_touched_overall; }
 
 static_search_tree::static_search_tree(int n) {
     this->n = n;
@@ -136,6 +155,9 @@ static_search_tree::static_search_tree(int n) {
     this->size = this->length * 2;
     this->height = log2(this->length) + 1;
     this->tree = (int *)malloc(sizeof(int) * this->size);
+
+    this->nodes_touched_overall = 0;
+    this->nodes_touched_during_query = 0;
 }
 
 static_search_tree::~static_search_tree() {
@@ -148,6 +170,7 @@ int static_search_tree::merge(int vlaue1, int value2) {
 
 void static_search_tree::update(int tree_l, int arr_l, int arr_r, int index, int value) {
     if(arr_l == arr_r ) {
+        this->nodes_touched_during_query++;
         this->tree[tree_l] = value;
         return;
     }
@@ -163,7 +186,10 @@ void static_search_tree::update(int tree_l, int arr_l, int arr_r, int index, int
     {
         this->update(right_child, mid + 1, arr_r, index, value);
     }
-
+    
+    this->nodes_touched_during_query++;
+    this->nodes_touched_during_query++;
+    this->nodes_touched_during_query++;
     this->tree[tree_l] = this->merge(this->tree[left_child], this->tree[right_child]);
 }
 
@@ -176,6 +202,7 @@ int static_search_tree::get(int tree_l, int arr_l, int arr_r, int value) {
     int left_child = tree_l * 2;
     int right_child = tree_l * 2 + 1;
 
+    this->nodes_touched_during_query++;
     if(value <= this->tree[left_child]) {
         return this->get(left_child, arr_l, mid, value);
     } else {
@@ -184,9 +211,16 @@ int static_search_tree::get(int tree_l, int arr_l, int arr_r, int value) {
 }
 
 void static_search_tree:: update(int index, int value){
+    this->nodes_touched_during_query = 0;
     this->update(1, 0, this->length - 1, index, value);
+    this->nodes_touched_overall += this->nodes_touched_during_query;
 }
 
 int static_search_tree::get(int value) {
-    return this->get(1, 0, this->length - 1, value);
+    this->nodes_touched_during_query = 0;
+    int result =  this->get(1, 0, this->length - 1, value);
+    this->nodes_touched_overall += this->nodes_touched_during_query;
+    return result;
 }
+
+long long static_search_tree::get_num_of_touched_nodes() { return this->nodes_touched_overall; }
