@@ -89,7 +89,6 @@ void test_get_update_3() {
     // -- This is a bit of stress test
     // Test update all elements in order from element 0 to last element.
     // make value = key. Do multiple passes with random tree sizes.
-    srand(time(NULL));
     for (int i = 0; i < 100; i++) {
         // limit size to the range [0...10000]
         // no point in doing more.
@@ -112,7 +111,6 @@ void test_get_update_4() {
     // -- This is a bit of stress test
     // Test update all elements.
     // make value = key^2. Do multiple passes with random tree sizes.
-    srand(time(NULL));
     for (int i = 0; i < 100; i++) {
         // limit size to the range [0...10000]
         // no point in doing more.
@@ -134,12 +132,49 @@ void test_get_update_4() {
     }
     cout << "test_get_update_4: OK" << endl;
 }
+void test_get_update_5() {
+    // -- This is a bit of stress test
+    // Test update all elements.
+    // make value = key^2. Do multiple passes with random tree sizes.
+    for (int i = 0; i < 1; i++) {
+        // limit size to the range [0...10000]
+        // no point in doing more.
+        int t_size = 5000000;
+        static_search_tree tree(t_size);
+        for (int j = 0; j < t_size; j++) {
+            tree.update(j, j);
+        }
+        // now update them again but in BACKWARDS order.
+        for (int j = t_size - 1; j >= 0; j--) {
+            tree.update(j, 2*j);
+        }
+        // for (int j = 0; j < t_size; j++) {
+        //     if (tree.get(2*j) != j) {
+        //         cout << "test_get_update_5 failed: expected value " << j*j << " at index " << j << ", tree size: " << t_size << endl;
+        //         return;
+        //     }
+        // }
+        for (int j = 0; j < t_size; j++) {
+            if (tree.get(2*j) != j) {
+                cout << "test_get_update_5 failed: expected value " << 2*j << " at index " << j << ", tree size: " << t_size << endl;
+                return;
+            }
+            if (tree.get(2*(t_size-j-1)) != (t_size-j-1)) {
+                cout << "test_get_update_5 failed: expected value " << 2*j << " at index " << j << ", tree size: " << t_size << endl;
+                return;
+            }
+        }
+    }
+    cout << "test_get_update_5: OK" << endl;
+}
+
 
 int main() {
-    test_get_update_1();
-    test_get_update_2();
-    test_get_update_3();
-    test_get_update_4();
+    srand(10);
+    // test_get_update_1();
+    // test_get_update_2();
+    // test_get_update_3();
+    test_get_update_5();
 
     return 0;
 }
