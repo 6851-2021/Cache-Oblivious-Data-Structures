@@ -28,6 +28,9 @@ CO_static_search_tree::CO_static_search_tree(int n) {
 
     this->nodes_touched_overall = 0;
     this->nodes_touched_during_query = 0;
+
+    this->recursive_calls_overall = 0;
+    this->recursive_call_during_query = 0;
 }
 
 CO_static_search_tree::~CO_static_search_tree() {
@@ -35,7 +38,7 @@ CO_static_search_tree::~CO_static_search_tree() {
 }
 
 int CO_static_search_tree::update(int tree_l, int h, int arr_l, int arr_r, int index, int value) {
-
+    this->recursive_call_during_query++;
     if (h == 1)
     {
         this->tree[tree_l] = value;
@@ -93,13 +96,15 @@ int CO_static_search_tree::update(int tree_l, int h, int arr_l, int arr_r, int i
 }
 
 void CO_static_search_tree::update(int index, int value) {
+    this->recursive_call_during_query = 0;
     this->nodes_touched_during_query = 0;
     this->update(0, this->height, 0, this->length, index, value);
+    this->recursive_calls_overall += this->recursive_call_during_query;
     this->nodes_touched_overall += this->nodes_touched_during_query;
 }
 
 int CO_static_search_tree::get(int tree_l, int h, int arr_l, int arr_r, int value) {
-    
+    this->recursive_call_during_query++;
     if (h == 1){
         return arr_l;
     }
@@ -142,12 +147,16 @@ int CO_static_search_tree::get(int tree_l, int h, int arr_l, int arr_r, int valu
 
 int CO_static_search_tree::get(int value) {
     this->nodes_touched_during_query = 0;
-    int result =  this->get(0, this->height, 0, this->length, value);
+    this->recursive_call_during_query = 0;
+    int result = this->get(0, this->height, 0, this->length, value);
+    this->recursive_calls_overall += this->recursive_call_during_query;
     this->nodes_touched_overall += this->nodes_touched_during_query;
     return result;
 }
 
 long long CO_static_search_tree::get_num_of_touched_nodes() { return this->nodes_touched_overall; }
+
+long long CO_static_search_tree::get_num_of_recursive_calls() { return this->recursive_calls_overall; }
 
 static_search_tree::static_search_tree(int n) {
     this->n = n;
@@ -158,6 +167,9 @@ static_search_tree::static_search_tree(int n) {
 
     this->nodes_touched_overall = 0;
     this->nodes_touched_during_query = 0;
+
+    this->recursive_calls_overall = 0;
+    this->recursive_call_during_query = 0;
 }
 
 static_search_tree::~static_search_tree() {
@@ -169,7 +181,9 @@ int static_search_tree::merge(int vlaue1, int value2) {
 }
 
 void static_search_tree::update(int tree_l, int arr_l, int arr_r, int index, int value) {
-    if(arr_l == arr_r ) {
+    this->recursive_call_during_query++;
+    if (arr_l == arr_r)
+    {
         this->nodes_touched_during_query++;
         this->tree[tree_l] = value;
         return;
@@ -194,7 +208,9 @@ void static_search_tree::update(int tree_l, int arr_l, int arr_r, int index, int
 }
 
 int static_search_tree::get(int tree_l, int arr_l, int arr_r, int value) {
-    if(arr_l == arr_r) {
+    this->recursive_call_during_query++;
+    if (arr_l == arr_r)
+    {
         return arr_l;
     }
 
@@ -211,16 +227,22 @@ int static_search_tree::get(int tree_l, int arr_l, int arr_r, int value) {
 }
 
 void static_search_tree:: update(int index, int value){
+    this->recursive_call_during_query = 0;
     this->nodes_touched_during_query = 0;
     this->update(1, 0, this->length - 1, index, value);
+    this->recursive_calls_overall += this->recursive_call_during_query;
     this->nodes_touched_overall += this->nodes_touched_during_query;
 }
 
 int static_search_tree::get(int value) {
     this->nodes_touched_during_query = 0;
-    int result =  this->get(1, 0, this->length - 1, value);
+    this->recursive_call_during_query = 0;
+    int result = this->get(1, 0, this->length - 1, value);
+    this->recursive_calls_overall += this->recursive_call_during_query;
     this->nodes_touched_overall += this->nodes_touched_during_query;
     return result;
 }
 
 long long static_search_tree::get_num_of_touched_nodes() { return this->nodes_touched_overall; }
+
+long long static_search_tree::get_num_of_recursive_calls() { return this->recursive_calls_overall; }
