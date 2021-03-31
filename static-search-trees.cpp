@@ -130,13 +130,63 @@ int CO_static_search_tree::get(int value) {
     return this->get(0, this->height, 0, this->length, value);
 }
 
-// int main() {
-//     int n = 1024;
-//     CO_static_search_tree ds(n);
-//     for (int i = 0; i < n; ++i) {
-//         ds.update(i, i * 2);
-//     }
-//     for (int i = 0; i <=  2 * (n-1); ++i) {
-//         cout << "value: " << i << " at index :" << ds.get(i) << endl;
-//     }
-// }
+static_search_tree::static_search_tree(int n) {
+    this->n = n;
+    this->length = next_power_of_2(n);
+    this->size = this->length * 2;
+    this->height = log2(this->length) + 1;
+    this->tree = (int *)malloc(sizeof(int) * this->size);
+}
+
+static_search_tree::~static_search_tree() {
+    free(this->tree);
+}
+
+int static_search_tree::merge(int vlaue1, int value2) {
+    return max(vlaue1, value2);
+}
+
+void static_search_tree::update(int tree_l, int arr_l, int arr_r, int index, int value) {
+    if(arr_l == arr_r ) {
+        this->tree[tree_l] = value;
+        return;
+    }
+
+    int mid = (arr_l + arr_r) / 2;
+    int left_child = tree_l * 2;
+    int right_child = tree_l * 2 + 1;
+    if (index <= mid)
+    {
+        this->update(left_child, arr_l, mid, index, value);
+    }
+    else
+    {
+        this->update(right_child, mid + 1, arr_r, index, value);
+    }
+
+    this->tree[tree_l] = this->merge(this->tree[left_child], this->tree[right_child]);
+}
+
+int static_search_tree::get(int tree_l, int arr_l, int arr_r, int value) {
+    if(arr_l == arr_r) {
+        return arr_l;
+    }
+
+    int mid = (arr_l + arr_r) / 2;
+    int left_child = tree_l * 2;
+    int right_child = tree_l * 2 + 1;
+
+    if(value <= this->tree[left_child]) {
+        return this->get(left_child, arr_l, mid, value);
+    } else {
+        return this->get(right_child, mid + 1, arr_r, value);
+    }
+}
+
+void static_search_tree:: update(int index, int value){
+    this->update(1, 0, this->length - 1, index, value);
+}
+
+int static_search_tree::get(int value) {
+    return this->get(1, 0, this->length - 1, value);
+}

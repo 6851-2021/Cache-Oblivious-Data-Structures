@@ -16,7 +16,7 @@ void print_array(int *a, int n) {
 void test_get_update_1() {
     // Test with a tree of size 15.
     int n = 15;
-    static_search_tree tree(n);
+    CO_static_search_tree tree(n);
     int a[15];
     a[0] = rand() % 10;
     for (int i = 1; i < n; ++i) {
@@ -66,7 +66,7 @@ void test_get_update_1() {
 
 void test_get_update_2() {
     // Test edge case with a tree of size 1.
-    static_search_tree tree(1);
+    CO_static_search_tree tree(1);
     tree.update(0, 2);
     if (tree.get(2) != 0) {
         cout << "test_get_update_2 failed: expected 2 at index 0." << endl;
@@ -94,7 +94,7 @@ void test_get_update_3() {
         // limit size to the range [0...10000]
         // no point in doing more.
         int t_size = 1 + rand() % 10000;
-        static_search_tree tree(t_size);
+        CO_static_search_tree tree(t_size);
         for (int j = 0; j < t_size; j++) {
             tree.update(j, j);
         }
@@ -117,7 +117,7 @@ void test_get_update_4() {
         // limit size to the range [0...10000]
         // no point in doing more.
         int t_size = 1 + rand() % 10000;
-        static_search_tree tree(t_size);
+        CO_static_search_tree tree(t_size);
         for (int j = 0; j < t_size; j++) {
             tree.update(j, j);
         }
