@@ -31,7 +31,7 @@ void test(int n, int Q) {
 }
 
 int main(){
-    srand(time(NULL));
+    srand(10);
     for (int run = 0; run < num_runs; ++run)
     {
         cout << "Run " << run << ": ";

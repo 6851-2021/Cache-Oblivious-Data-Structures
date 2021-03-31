@@ -12,7 +12,7 @@ int next_power_of_2(unsigned int n) {
     n |= n >> 8;
     n |= n >> 16;
     n++;
-    return n;
+    return n; 
 }
 
 int CO_static_search_tree::merge(int value1, int value2) {
