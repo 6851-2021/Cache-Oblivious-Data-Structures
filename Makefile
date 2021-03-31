@@ -1,4 +1,4 @@
-all: test_CO_SST test_SST
+all: test_CO_SST test_SST perf
 
 test_CO_SST: static-search-trees.h static-search-trees.cpp co_static_search_trees_tests.cpp
 	g++ -O3 -flto -o test_co_sst static-search-trees.cpp co_static_search_trees_tests.cpp
