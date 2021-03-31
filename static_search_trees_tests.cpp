@@ -171,9 +171,10 @@ void test_get_update_5() {
 
 int main() {
     srand(10);
-    // test_get_update_1();
-    // test_get_update_2();
-    // test_get_update_3();
+    test_get_update_1();
+    test_get_update_2();
+    test_get_update_3();
+    test_get_update_4();
     test_get_update_5();
 
     return 0;
