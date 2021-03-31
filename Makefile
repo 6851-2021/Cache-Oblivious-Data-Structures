@@ -5,3 +5,6 @@ test_CO_SST: static-search-trees.h static-search-trees.cpp co_static_search_tree
 
 test_SST: static-search-trees.h static-search-trees.cpp static_search_trees_tests.cpp
 	g++ -O3 -flto -o test_sst static-search-trees.cpp static_search_trees_tests.cpp
+
+clean:
+	rm test_sst test_co_sst
