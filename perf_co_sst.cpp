@@ -27,8 +27,6 @@ void test(int n, int Q) {
         }
     }
     cout << "test(" << n << ", " << Q << "): OK" << endl;
-    cout << "Nodes Touched: " << tree.get_num_of_touched_nodes() << endl;
-    cout << "Recursive Calls: " << tree.get_num_of_recursive_calls() << endl;
 }
 
 int main(){
