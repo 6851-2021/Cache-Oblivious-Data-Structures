@@ -176,69 +176,127 @@ int CA_static_search_tree::merge(int value1, int value2) {
     return max(value1, value2);
 }
 
-void CA_static_search_tree::update(int tree_l, int temp_root, int h, int arr_l, int arr_r, int index, int value) {
-    if (h > 0 && h % 3 == 0) {
-        int next_subtree_size = min(1 << (this->height-h) - 1, 15);
-        // update tree_l
-        tree_l = tree_l*8 + (temp_root-7)*next_subtree_size;
-        // get subtree 'index'
-        // int sub_idx = (tree_l-1) / 15;
-        // // get new subtree index
-        // int sub_idx = sub_idx * 8 + (temp_root-7);
-        // // now get actual index
-        // tree_l = sub_idx*15 + 1;
-        temp_root = 1;
-    }
+void CA_static_search_tree::update(int tree_l, int num_inner_nodes, int temp_root, int h, int arr_l, int arr_r, int index, int value) {
     if (arr_l == arr_r)
     {
-        this->tree[tree_l + temp_root] = value;
+        int last_subtree_size = min((1 << (this->height-((h>>2)<<2))) - 1, 15);
+        int real_subtree_root = num_inner_nodes*15 + (tree_l-num_inner_nodes)*last_subtree_size;
+        // printf("update at index %d, real index %d, value %d\n", arr_l, tree_l + temp_root, value);
+        this->tree[real_subtree_root + temp_root] = value;
         return;
     }
+    int old_tree_l = tree_l, old_temp_root = temp_root;
     int mid = (arr_l + arr_r) / 2;
+    int new_tree_l = 0, new_tree_r = 0;
+    if (h > 0 && (h+1) % 4 == 0) {
+        h++;
+        int old_num_inner_nodes = num_inner_nodes;
+        num_inner_nodes += (1 << (h-4));
+        // update tree_l
+        int mid = (arr_l + arr_r) / 2;
+        new_tree_l = tree_l*16 + (temp_root-8)*2 + 1;
+        new_tree_r = tree_l*16 + (temp_root-8)*2 + 2;
+        if (index <= mid) {
+            arr_r = mid;
+            tree_l = new_tree_l;
+        } else {
+            arr_l = mid + 1;
+            tree_l = new_tree_r;
+        }
+        temp_root = 1;
+        if (h == this->height - 1) {
+            int last_subtree_size = min((1 << (this->height-((h>>2)<<2))) - 1, 15);
+            int real_subtree_root = num_inner_nodes*15 + (tree_l-num_inner_nodes)*last_subtree_size;
+            this->tree[real_subtree_root + temp_root] = value;
+            // printf("here....\n");
+            int real_tree_l = num_inner_nodes*15 + (new_tree_l-num_inner_nodes)*last_subtree_size;
+            int real_tree_r = real_tree_l + last_subtree_size;
+            int old_real_subtree_root = old_tree_l*15;
+            this->tree[old_real_subtree_root + old_temp_root] = this->merge(this->tree[real_tree_l + 1], this->tree[real_tree_r + 1]);
+            return;
+        }
+    }
+    mid = (arr_l + arr_r) / 2;
     int left_child = temp_root * 2;
     int right_child = temp_root * 2 + 1;
     h++;
     if (index <= mid)
     {
-        this->update(tree_l, left_child, h, arr_l, mid, index, value);
+        this->update(tree_l, num_inner_nodes, left_child, h, arr_l, mid, index, value);
     }
     else
     {
-        this->update(tree_l, right_child, h, mid + 1, arr_r, index, value);
+        this->update(tree_l, num_inner_nodes, right_child, h, mid + 1, arr_r, index, value);
     }
-    this->tree[tree_l] = this->merge(this->tree[tree_l + left_child], this->tree[tree_l + right_child]);
+    int last_subtree_size = min((1 << (this->height-((h>>2)<<2))) - 1, 15);
+    int real_subtree_root = num_inner_nodes*15 + (tree_l-num_inner_nodes)*last_subtree_size;
+    this->tree[real_subtree_root + temp_root] = this->merge(this->tree[real_subtree_root + left_child], this->tree[real_subtree_root + right_child]);
+    if (old_tree_l != tree_l) {
+        int last_subtree_size = min((1 << (this->height-((h>>2)<<2))) - 1, 15);
+        int real_tree_l = num_inner_nodes*15 + (new_tree_l-num_inner_nodes)*last_subtree_size;
+        int real_tree_r = real_tree_l + last_subtree_size;
+        int old_real_subtree_root = old_tree_l*15;
+        this->tree[old_real_subtree_root + old_temp_root] = this->merge(this->tree[real_tree_l + 1], this->tree[real_tree_r + 1]);
+    }
 }
 
-int CA_static_search_tree::get(int tree_l, int temp_root, int h, int arr_l, int arr_r, int value) {
-    if (h == 3) {
-        int next_subtree_size = min(1 << (this->height-h) - 1, 15);
-        // update tree_l
-        tree_l = tree_l*8 + (temp_root-7)*next_subtree_size;
-        temp_root = 1;
-        h = 0;
-    }
+int CA_static_search_tree::get(int tree_l, int num_inner_nodes, int temp_root, int h, int arr_l, int arr_r, int value) {
     if (arr_l == arr_r)
     {
+        // printf("get at index %d, real index %d, value %d\n", arr_l, tree_l + temp_root, this->tree[tree_l+temp_root]);
         return arr_l;
     }
     int mid = (arr_l + arr_r) / 2;
+    if (h > 0 && (h+1) % 4 == 0) {
+        h++;
+        num_inner_nodes += (1 << (h-4));
+        // update tree_l
+        int mid = (arr_l + arr_r) / 2;
+        int left_or_right = 1;
+        int new_tree_l = tree_l*16 + (temp_root-8)*2 + 1;
+        tree_l = new_tree_l;
+        temp_root = 1;
+        int last_subtree_size = min((1 << (this->height-((h>>2)<<2))) - 1, 15);
+        int real_subtree_root = num_inner_nodes*15 + (tree_l-num_inner_nodes)*last_subtree_size;
+        if (value <= this->tree[real_subtree_root + temp_root]) {
+            arr_r = mid;
+        } else {
+            arr_l = mid + 1;
+            tree_l++;
+        }
+        if (h == this->height - 1) {
+            return arr_l;
+        }
+    }
+    mid = (arr_l + arr_r) / 2;
     int left_child = temp_root * 2;
     int right_child = temp_root * 2 + 1;
     h++;
-    if(value <= this->tree[tree_l + left_child]) {
-        return this->get(tree_l, left_child, h, arr_l, mid, value);
+    int last_subtree_size = min((1 << (this->height-((h>>2)<<2))) - 1, 15);
+    int real_subtree_root = num_inner_nodes*15 + (tree_l-num_inner_nodes)*last_subtree_size;
+    if(value <= this->tree[real_subtree_root + left_child]) {
+        return this->get(tree_l, num_inner_nodes, left_child, h, arr_l, mid, value);
     } else {
-        return this->get(tree_l, right_child, h, mid + 1, arr_r, value);
+        return this->get(tree_l, num_inner_nodes, right_child, h, mid + 1, arr_r, value);
     }
 }
 
 void CA_static_search_tree::update(int index, int value) {
-    this->update(0, 1, 0, 0, this->length - 1, index, value);
+    this->update(0, 0, 1, 0, 0, this->length - 1, index, value);
 }
 
 int CA_static_search_tree::get(int value) {
-    int result = this->get(0, 1, 0, 0, this->length - 1, value);
+    int result = this->get(0, 0, 1, 0, 0, this->length - 1, value);
     return result;
+}
+
+void CA_static_search_tree::print_tree() {
+    int start = 1;
+    // printf("")
+    for (int i = 1; i < this->size; i++) {
+        printf("%d ", this->tree[i]);
+    }
+    printf("\n");
 }
 
 //-----------------------------------------------------------------------
@@ -259,6 +317,15 @@ static_search_tree::static_search_tree(int n) {
 
 static_search_tree::~static_search_tree() {
     free(this->tree);
+}
+
+void static_search_tree::print_tree() {
+    int start = 1;
+    // printf("")
+    for (int i = 1; i < this->size; i++) {
+        printf("%d ", this->tree[i]);
+    }
+    printf("\n");
 }
 
 int static_search_tree::merge(int vlaue1, int value2) {

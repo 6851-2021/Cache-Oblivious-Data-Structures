@@ -60,8 +60,9 @@ class CA_static_search_tree {
         int height;
 
         int merge(int value1, int value2);
-        void update(int tree_l, int temp_root, int h, int arr_l, int arr_r, int index, int value);
-        int get(int tree_l, int temp_root, int h, int arr_l, int arr_r, int value);
+        void update(int tree_l, int num_inner_nodes, int temp_root, int h, int arr_l, int arr_r, int index, int value);
+        int get(int tree_l, int num_inner_nodes, int temp_root, int h, int arr_l, int arr_r, int value);
+        int calc_real_subtree_root(int root_idx);
     public:
     ~CA_static_search_tree();
     /*
@@ -69,6 +70,12 @@ class CA_static_search_tree {
     the next power of 2 greater than n.
     */
     CA_static_search_tree(int n);
+
+    /*
+    Print the tree defined array values.
+    */
+    void print_tree();
+
     /*
     Update the value at the given index.
     */
@@ -105,6 +112,12 @@ class static_search_tree {
     the next power of 2 greater than n
     */
     static_search_tree(int n);
+
+    /*
+    Print the tree defined array values.
+    */
+    void print_tree();
+
     /*
     Update the value at the given index
     */
