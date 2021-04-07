@@ -49,6 +49,5 @@ void run(bool recursive) {
 
 int main(){
     srand(10);
-    run(false);
-    run(true);
+    run(sst_recursive_falg);
 }
