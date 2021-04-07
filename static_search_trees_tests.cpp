@@ -14,10 +14,10 @@ void print_array(int *a, int n) {
     printf("\n");
 }
 
-void test_get_update_1() {
+void test_get_update_1(bool recursive) {
     // Test with a tree of size 15.
     int n = 15;
-    static_search_tree tree(n);
+    static_search_tree tree(n, recursive);
     int a[15];
     a[0] = rand() % 10;
     for (int i = 1; i < n; ++i) {
@@ -65,9 +65,9 @@ void test_get_update_1() {
     cout << "test_get_update_1: OK" << endl;
 }
 
-void test_get_update_2() {
+void test_get_update_2(bool recursive) {
     // Test edge case with a tree of size 1.
-    static_search_tree tree(1);
+    static_search_tree tree(1, recursive);
     tree.update(0, 2);
     if (tree.get(2) != 0) {
         cout << "test_get_update_2 failed: expected 2 at index 0." << endl;
@@ -86,7 +86,7 @@ void test_get_update_2() {
     cout << "test_get_update_2: OK" << endl;
 }
 
-void test_get_update_3() {
+void test_get_update_3(bool recursive) {
     // -- This is a bit of stress test
     // Test update all elements in order from element 0 to last element.
     // make value = key. Do multiple passes with random tree sizes.
@@ -94,7 +94,7 @@ void test_get_update_3() {
         // limit size to the range [0...10000]
         // no point in doing more.
         int t_size = 1 + rand() % 10000;
-        static_search_tree tree(t_size);
+        static_search_tree tree(t_size, recursive);
         for (int j = 0; j < t_size; j++) {
             tree.update(j, j);
         }
@@ -108,7 +108,7 @@ void test_get_update_3() {
     cout << "test_get_update_3: OK" << endl;
 }
 
-void test_get_update_4() {
+void test_get_update_4(bool recursive) {
     // -- This is a bit of stress test
     // Test update all elements.
     // make value = key^2. Do multiple passes with random tree sizes.
@@ -116,7 +116,7 @@ void test_get_update_4() {
         // limit size to the range [0...10000]
         // no point in doing more.
         int t_size = 1 + rand() % 10000;
-        static_search_tree tree(t_size);
+        static_search_tree tree(t_size, recursive);
         for (int j = 0; j < t_size; j++) {
             tree.update(j, j);
         }
@@ -133,7 +133,7 @@ void test_get_update_4() {
     }
     cout << "test_get_update_4: OK" << endl;
 }
-void test_get_update_5() {
+void test_get_update_5(bool recursive) {
     // -- This is a bit of stress test
     // Test update all elements.
     // make value = key^2. Do multiple passes with random tree sizes.
@@ -141,7 +141,7 @@ void test_get_update_5() {
         // limit size to the range [0...10000]
         // no point in doing more.
         int t_size = 5000000;
-        static_search_tree tree(t_size);
+        static_search_tree tree(t_size, recursive);
         for (int j = 0; j < t_size; j++) {
             tree.update(j, j);
         }
@@ -173,11 +173,16 @@ void test_get_update_5() {
 int main() {
     srand(10);
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    test_get_update_1();
-    test_get_update_2();
-    test_get_update_3();
-    test_get_update_4();
-    test_get_update_5();
+    test_get_update_1(false);
+    test_get_update_2(false);
+    test_get_update_3(false);
+    test_get_update_4(false);
+    test_get_update_5(false);
+    test_get_update_1(true);
+    test_get_update_2(true);
+    test_get_update_3(true);
+    test_get_update_4(true);
+    test_get_update_5(true);
     chrono::steady_clock::time_point end = chrono::steady_clock::now();
     cout << "Time difference = " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
 

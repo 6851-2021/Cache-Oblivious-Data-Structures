@@ -4,7 +4,7 @@
 #include<math.h>
 using namespace std;
 
-int next_power_of_2(unsigned int n) {
+inline int next_power_of_2(unsigned int n) {
     n--;
     n |= n >> 1;
     n |= n >> 2;
@@ -430,8 +430,9 @@ void CA_static_search_tree::print_tree() {
 
 //-----------------------------------------------------------------------
 
-static_search_tree::static_search_tree(int n) {
+static_search_tree::static_search_tree(int n, bool recursive) {
     this->n = n;
+    this->recursive = recursive;
     this->length = next_power_of_2(n);
     this->size = this->length * 2;
     this->height = log2(this->length) + 1;
@@ -455,7 +456,7 @@ inline int static_search_tree::merge(int vlaue1, int value2) {
     return max(vlaue1, value2);
 }
 
-void static_search_tree::update(int tree_l, int arr_l, int arr_r, int index, int value) {
+void static_search_tree::update_recursive(int tree_l, int arr_l, int arr_r, int index, int value) {
     if (arr_l == arr_r)
     {
         this->tree[tree_l] = value;
@@ -467,18 +468,40 @@ void static_search_tree::update(int tree_l, int arr_l, int arr_r, int index, int
     int right_child = tree_l * 2 + 1;
     if (index <= mid)
     {
-        this->update(left_child, arr_l, mid, index, value);
+        this->update_recursive(left_child, arr_l, mid, index, value);
     }
     else
     {
-        this->update(right_child, mid + 1, arr_r, index, value);
+        this->update_recursive(right_child, mid + 1, arr_r, index, value);
     }
-    
 
     this->tree[tree_l] = this->merge(this->tree[left_child], this->tree[right_child]);
 }
 
-int static_search_tree::get(int tree_l, int arr_l, int arr_r, int value) {
+void static_search_tree::update_iterative(int tree_l, int arr_l, int arr_r, int index, int value) {
+    while(arr_l != arr_r) {
+        int mid = (arr_l + arr_r) >> 1;
+        int left_child = tree_l << 1;
+        int right_child = left_child + 1;
+        if(index <= mid){
+            tree_l = left_child;
+            arr_r = mid;
+        }
+        else {
+            tree_l = right_child;
+            arr_l = mid + 1;
+        }
+    }
+    this->tree[tree_l] = value;
+    while(tree_l != 1) {
+        tree_l /= 2;
+        int left_child = tree_l << 1;
+        int right_child = left_child + 1;
+        this->tree[tree_l] = this->merge(this->tree[left_child], this->tree[right_child]);
+    }
+}
+
+int static_search_tree::get_recursive(int tree_l, int arr_l, int arr_r, int value) {
     if (arr_l == arr_r)
     {
         return arr_l;
@@ -489,18 +512,47 @@ int static_search_tree::get(int tree_l, int arr_l, int arr_r, int value) {
     int right_child = tree_l * 2 + 1;
 
     if(value <= this->tree[left_child]) {
-        return this->get(left_child, arr_l, mid, value);
+        return this->get_recursive(left_child, arr_l, mid, value);
     } else {
-        return this->get(right_child, mid + 1, arr_r, value);
+        return this->get_recursive(right_child, mid + 1, arr_r, value);
     }
 }
 
-void static_search_tree:: update(int index, int value){
+int static_search_tree::get_iterative(int tree_l, int arr_l, int arr_r, int value) {
+    while(arr_l != arr_r) {
+        int mid = (arr_l + arr_r) >> 1;
+        int left_child = tree_l << 1;
+        int right_child = left_child + 1;
+        if(value <= this->tree[left_child]){
+            tree_l = left_child;
+            arr_r = mid;
+        }
+        else {
+            tree_l = right_child;
+            arr_l = mid + 1;
+        }
+    }
+    return arr_l;
+}
 
-    this->update(1, 0, this->length - 1, index, value);
+void static_search_tree:: update(int index, int value){
+    if (this->recursive)
+    {
+        this->update_recursive(1, 0, this->length - 1, index, value);
+    }
+    else
+    {
+        this->update_iterative(1, 0, this->length - 1, index, value);
+    }
 }
 
 int static_search_tree::get(int value) {
-    int result = this->get(1, 0, this->length - 1, value);
-    return result;
+    if(this->recursive) {
+        int result = this->get_recursive(1, 0, this->length - 1, value);
+        return result;
+    }
+    else {
+        int result = this->get_iterative(1, 0, this->length - 1, value);
+        return result;
+    }
 }
