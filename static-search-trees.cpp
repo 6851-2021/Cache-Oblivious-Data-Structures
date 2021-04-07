@@ -149,10 +149,11 @@ int CO_static_search_tree::update(int tree_l, int h, int arr_l, int og_height, i
 
     //update bottom tree
     int bottom_tree_h = bottom_tree_h_memo[h];
+    // int bottom_tree_h = next_power_of_2((int)ceil(h / 2));
+
     int top_tree_h = h - bottom_tree_h;
     
     int top_tree_size = (1 << top_tree_h) - 1;
-    int number_of_bottom_trees = top_tree_size + 1;
 
     int bottom_tree_og_height = og_height - top_tree_h;
     int bottom_tree_index = (index - arr_l) >> (bottom_tree_og_height - 1);
@@ -193,14 +194,17 @@ inline int CO_static_search_tree::get_3_base_case(int tree_l, int h, int arr_l, 
 
     int leafs_og_height = og_height - 2;
     int leafs_range_length = (1 << (leafs_og_height - 1));
-    if (value <= this->tree[tree_l + 2])
-        return arr_l;
-    else if(value <= this->tree[tree_l + 3])
-        return arr_l + leafs_range_length;
-    else if(value <= this->tree[tree_l + 5])
-        return arr_l + leafs_range_length << 1;
-    else
-        return arr_l + (leafs_range_length << 1) + leafs_range_length; 
+    if(value <= this->tree[tree_l + 1]){
+        if (value <= this->tree[tree_l + 2])
+            return arr_l;
+        else    
+            return arr_l + leafs_range_length;
+    } else {
+        if(value <= this->tree[tree_l + 5])
+            return arr_l + leafs_range_length << 1;
+        else
+            return arr_l + (leafs_range_length << 1) + leafs_range_length; 
+    }
 }
 
 inline int CO_static_search_tree::get_4_base_case(int tree_l, int h, int arr_l, int og_height, int value) {
@@ -256,12 +260,12 @@ int CO_static_search_tree::get(int tree_l, int h, int arr_l, int og_height, int 
     }
 
     int bottom_tree_h = bottom_tree_h_memo[h];
+    // int bottom_tree_h = next_power_of_2((int)ceil(h / 2));
     int top_tree_h = h - bottom_tree_h;
 
     int index = this->get(tree_l, top_tree_h, arr_l, og_height, value);
     
     int top_tree_size = (1 << top_tree_h) - 1;
-    int number_of_bottom_trees = top_tree_size + 1;
 
     int bottom_tree_og_height = og_height - top_tree_h;
     int bottom_tree_index = (index - arr_l) >> (bottom_tree_og_height - 1);
