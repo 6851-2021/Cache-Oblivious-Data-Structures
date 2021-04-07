@@ -64,6 +64,66 @@ inline int CO_static_search_tree::update_3_base_case(int tree_l, int h, int arr_
     return this->tree[tree_l];
 }
 
+inline int CO_static_search_tree::update_4_base_case(int tree_l, int h, int arr_l, int og_height, int index, int value) {
+    /*
+                                    0
+                    1                                   2
+            3               6                   9                 12
+        4       5       7       8           10       11      13          14                    
+    */
+    int leafs_og_height = og_height - 3;
+    int leaf_index = (index - arr_l) >> (leafs_og_height - 1);
+    if(leaf_index == 0) {
+        this->tree[tree_l + 4] = value;
+        this->tree[tree_l + 3] = max(this->tree[tree_l + 4], this->tree[tree_l + 5]);
+        this->tree[tree_l + 1] = max(this->tree[tree_l + 3], this->tree[tree_l + 6]);
+        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+    }
+    else if(leaf_index == 1) {
+        this->tree[tree_l + 5] = value;
+        this->tree[tree_l + 3] = max(this->tree[tree_l + 4], this->tree[tree_l + 5]);
+        this->tree[tree_l + 1] = max(this->tree[tree_l + 3], this->tree[tree_l + 6]);
+        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+    }
+    else if(leaf_index == 2) {
+        this->tree[tree_l + 7] = value;
+        this->tree[tree_l + 6] = max(this->tree[tree_l + 7], this->tree[tree_l + 8]);
+        this->tree[tree_l + 1] = max(this->tree[tree_l + 3], this->tree[tree_l + 6]);
+        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+    }
+    else if(leaf_index == 3) {
+        this->tree[tree_l + 8] = value;
+        this->tree[tree_l + 6] = max(this->tree[tree_l + 7], this->tree[tree_l + 8]);
+        this->tree[tree_l + 1] = max(this->tree[tree_l + 3], this->tree[tree_l + 6]);
+        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+    }
+    else if(leaf_index == 4) {
+        this->tree[tree_l + 10] = value;
+        this->tree[tree_l + 9] = max(this->tree[tree_l + 10], this->tree[tree_l + 11]);
+        this->tree[tree_l + 2] = max(this->tree[tree_l + 9], this->tree[tree_l + 12]);
+        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+    }
+    else if(leaf_index == 5){
+        this->tree[tree_l + 11] = value;
+        this->tree[tree_l + 9] = max(this->tree[tree_l + 10], this->tree[tree_l + 11]);
+        this->tree[tree_l + 2] = max(this->tree[tree_l + 9], this->tree[tree_l + 12]);
+        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+    }
+    else if(leaf_index == 6){
+        this->tree[tree_l + 13] = value;
+        this->tree[tree_l + 12] = max(this->tree[tree_l + 13], this->tree[tree_l + 14]);
+        this->tree[tree_l + 2] = max(this->tree[tree_l + 9], this->tree[tree_l + 12]);
+        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+    }
+    else if(leaf_index == 7){
+        this->tree[tree_l + 14] = value;
+        this->tree[tree_l + 12] = max(this->tree[tree_l + 13], this->tree[tree_l + 14]);
+        this->tree[tree_l + 2] = max(this->tree[tree_l + 9], this->tree[tree_l + 12]);
+        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+    }
+    return this->tree[tree_l];
+}
+
 int CO_static_search_tree::update(int tree_l, int h, int arr_l, int og_height, int index, int value) {
     if (h == 1)
     {
@@ -82,6 +142,9 @@ int CO_static_search_tree::update(int tree_l, int h, int arr_l, int og_height, i
     }
     if(h == 3) {
         return this->update_3_base_case(tree_l, h, arr_l, og_height, index, value);
+    }   
+    if(h == 4) {
+        return this->update_4_base_case(tree_l, h, arr_l, og_height, index, value);
     }
 
     //update bottom tree
@@ -140,6 +203,42 @@ inline int CO_static_search_tree::get_3_base_case(int tree_l, int h, int arr_l, 
         return arr_l + (leafs_range_length << 1) + leafs_range_length; 
 }
 
+inline int CO_static_search_tree::get_4_base_case(int tree_l, int h, int arr_l, int og_height, int value) {
+    /*
+                                    0
+                    1                                   2
+            3               6                   9                 12
+        4       5       7       8           10       11      13          14                    
+    */
+    int leafs_og_height = og_height - 3;
+    int leafs_range_length = (1 << (leafs_og_height - 1));
+    if(value <= this->tree[tree_l + 1]) {
+        if(value <= this->tree[tree_l + 3]) {
+            if(value <= this->tree[tree_l + 4])
+                return arr_l;
+            return arr_l + leafs_range_length;
+        }
+        else
+        { //6
+            if(value <= this->tree[tree_l + 7])
+                return arr_l + (leafs_range_length << 1);
+            return arr_l + (leafs_range_length << 1) + leafs_range_length;
+        }
+    } else //2
+    {
+        if(value <= this->tree[tree_l + 9]) {
+            if(value <= this->tree[tree_l + 10]) return  arr_l + (leafs_range_length << 2);
+            return arr_l + (leafs_range_length << 2) + leafs_range_length;
+        }
+        else //12 
+        {
+            if(value <= this->tree[tree_l + 13])
+                return arr_l + (leafs_range_length << 2) + (leafs_range_length << 1);
+            return arr_l + (leafs_range_length << 2) + (leafs_range_length << 1) + leafs_range_length;
+        }
+    }
+}
+
 int CO_static_search_tree::get(int tree_l, int h, int arr_l, int og_height, int value) {
     if (h == 1){
         return arr_l;
@@ -151,6 +250,9 @@ int CO_static_search_tree::get(int tree_l, int h, int arr_l, int og_height, int 
     }
     if(h == 3){
         return this->get_3_base_case(tree_l, h, arr_l, og_height, value);
+    }
+    if(h == 4) {
+        return this->get_4_base_case(tree_l, h, arr_l, og_height, value);
     }
 
     int bottom_tree_h = bottom_tree_h_memo[h];

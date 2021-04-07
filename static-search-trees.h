@@ -19,6 +19,8 @@ class CO_static_search_tree {
         int update_3_base_case(int tree_l, int h, int arr_l, int og_height, int index, int value);
         int get_3_base_case(int tree_l, int h, int arr_l, int og_height, int value);
 
+        int update_4_base_case(int tree_l, int h, int arr_l, int og_height, int index, int value);
+        int get_4_base_case(int tree_l, int h, int arr_l, int og_height, int value);
     public:
         ~CO_static_search_tree();
         /*
