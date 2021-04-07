@@ -13,8 +13,12 @@ class CO_static_search_tree {
         int height;
 
         int merge(int vlaue1, int value2);
-        int update(int tree_l, int h, int arr_l, int arr_r, int index, int value);
-        int get(int tree_l, int h, int arr_l, int arr_r, int value);
+        int update(int tree_l, int h, int arr_l,  int og_height, int index, int value);
+        int get(int tree_l, int h, int arr_l,  int og_height, int value);
+
+        int update_3_base_case(int tree_l, int h, int arr_l, int og_height, int index, int value);
+        int get_3_base_case(int tree_l, int h, int arr_l, int og_height, int value);
+
     public:
         ~CO_static_search_tree();
         /*

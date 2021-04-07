@@ -15,4 +15,4 @@ perf: static-search-trees.h static-search-trees.cpp perf_sst.cpp perf_co_sst.cpp
 	g++ -O3 -flto -o perf_ca_sst static-search-trees.cpp perf_ca_sst.cpp
 
 clean:
-	rm -f test_co_sst test_sst perf_sst perf_co_sst
+	rm -f test_co_sst test_sst perf_sst perf_co_sst test_ca_sst perf_ca_sst

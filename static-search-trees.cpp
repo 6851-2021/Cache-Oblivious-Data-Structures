@@ -15,75 +15,9 @@ int next_power_of_2(unsigned int n) {
     return n; 
 }
 
-const int next_power_of_2_memo[] = {
-    0,
-    1,
-    2,
-    4,
-    4,
-    8,
-    8,
-    8,
-    8,
-    16,
-    16,
-    16,
-    16,
-    16,
-    16,
-    16,
-    16,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-    64,
-};
+const int bottom_tree_h_memo[] = {0,1,1,2,2,4,4,4,4,8,8,8,8,8,8,8,8,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32};
 
-int CO_static_search_tree::merge(int value1, int value2) {
+inline int CO_static_search_tree::merge(int value1, int value2) {
     return max(value1, value2);
 }
 
@@ -99,14 +33,45 @@ CO_static_search_tree::~CO_static_search_tree() {
     free(this->tree);
 }
 
-int CO_static_search_tree::update(int tree_l, int h, int arr_l, int arr_r, int index, int value) {
+inline int CO_static_search_tree::update_3_base_case(int tree_l, int h, int arr_l, int og_height, int index, int value) {
+    /*
+                            0
+                    1               4
+                2       3       5       6
+    */
+    int leafs_og_height = og_height - 2;
+    int leaf_index = (index - arr_l) >> (leafs_og_height - 1);
+    if(leaf_index == 0) {
+        this->tree[tree_l + 2] = value;
+        this->tree[tree_l + 1] = max(this->tree[tree_l + 2], this->tree[tree_l + 3]);
+        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 4]);
+    }
+    else if(leaf_index == 1) {
+        this->tree[tree_l + 3] = value;
+        this->tree[tree_l + 1] = max(this->tree[tree_l + 2], this->tree[tree_l + 3]);
+        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 4]);
+    }
+    else if(leaf_index == 2) {
+        this->tree[tree_l + 5] = value;
+        this->tree[tree_l + 4] = max(this->tree[tree_l + 5], this->tree[tree_l + 6]);
+        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 4]);
+    }
+    else if(leaf_index == 3) {
+        this->tree[tree_l + 6] = value;
+        this->tree[tree_l + 4] = max(this->tree[tree_l + 5], this->tree[tree_l + 6]);
+        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 4]);
+    }
+    return this->tree[tree_l];
+}
+
+int CO_static_search_tree::update(int tree_l, int h, int arr_l, int og_height, int index, int value) {
     if (h == 1)
     {
         this->tree[tree_l] = value;
         return value;
     }
     if(h == 2) {
-        if(index < (arr_l + arr_r) / 2) {
+        if(index < arr_l + (1 << (og_height - 2))) {
             this->tree[tree_l + 1] = value;
         } else {
             this->tree[tree_l + 2] = value;
@@ -115,23 +80,25 @@ int CO_static_search_tree::update(int tree_l, int h, int arr_l, int arr_r, int i
         this->tree[tree_l] = this->merge(this->tree[tree_l + 1], this->tree[tree_l + 2]);
         return this->tree[tree_l];
     }
+    if(h == 3) {
+        return this->update_3_base_case(tree_l, h, arr_l, og_height, index, value);
+    }
 
     //update bottom tree
-    int bottom_tree_h = next_power_of_2_memo[(int)ceil(h / 2.0)];
+    int bottom_tree_h = bottom_tree_h_memo[h];
     int top_tree_h = h - bottom_tree_h;
     
     int top_tree_size = (1 << top_tree_h) - 1;
     int number_of_bottom_trees = top_tree_size + 1;
 
-    int bottom_tree_range_length = (arr_r - arr_l) >> top_tree_h;
-    int bottom_tree_index = (index - arr_l) / bottom_tree_range_length;
+    int bottom_tree_og_height = og_height - top_tree_h;
+    int bottom_tree_index = (index - arr_l) >> (bottom_tree_og_height - 1);
     int bottom_tree_size = (1 << bottom_tree_h) - 1;
 
     int bottom_tree_tree_l = tree_l + top_tree_size + (bottom_tree_index << bottom_tree_h) - bottom_tree_index;
-    int bottom_tree_arr_l = arr_l + bottom_tree_index * bottom_tree_range_length;
-    int bottom_tree_arr_r = bottom_tree_arr_l + bottom_tree_range_length;
+    int bottom_tree_arr_l = arr_l + (bottom_tree_index << (bottom_tree_og_height - 1));
 
-    int child_value = this->update(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_arr_r, index, value);
+    int child_value = this->update(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, index, value);
 
     //get adjacent child
     int adjacent_child_value;
@@ -145,55 +112,75 @@ int CO_static_search_tree::update(int tree_l, int h, int arr_l, int arr_r, int i
     int merged_value = this->merge(child_value, adjacent_child_value);
 
     //update upper tree
-    int final_value = this->update(tree_l, top_tree_h, arr_l, arr_r, index, merged_value);
+    int final_value = this->update(tree_l, top_tree_h, arr_l, og_height, index, merged_value);
 
     return final_value;
 }
 
 void CO_static_search_tree::update(int index, int value) {
-    this->update(0, this->height, 0, this->length, index, value);
+    this->update(0, this->height, 0, this->height, index, value);
 }
 
-int CO_static_search_tree::get(int tree_l, int h, int arr_l, int arr_r, int value) {
+inline int CO_static_search_tree::get_3_base_case(int tree_l, int h, int arr_l, int og_height, int value) {
+    /*
+                            0
+                    1               4
+                2       3       5       6
+    */
+
+    int leafs_og_height = og_height - 2;
+    int leafs_range_length = (1 << (leafs_og_height - 1));
+    if (value <= this->tree[tree_l + 2])
+        return arr_l;
+    else if(value <= this->tree[tree_l + 3])
+        return arr_l + leafs_range_length;
+    else if(value <= this->tree[tree_l + 5])
+        return arr_l + leafs_range_length << 1;
+    else
+        return arr_l + (leafs_range_length << 1) + leafs_range_length; 
+}
+
+int CO_static_search_tree::get(int tree_l, int h, int arr_l, int og_height, int value) {
     if (h == 1){
         return arr_l;
     }
     if(h == 2) {
         if(value <= this->tree[tree_l + 1])
             return arr_l;
-        return (arr_l + arr_r) / 2;
+        return arr_l + (1 << (og_height - 2));
+    }
+    if(h == 3){
+        return this->get_3_base_case(tree_l, h, arr_l, og_height, value);
     }
 
-    int bottom_tree_h = next_power_of_2_memo[(int)ceil(h / 2.0)];
+    int bottom_tree_h = bottom_tree_h_memo[h];
     int top_tree_h = h - bottom_tree_h;
 
-    int index = this->get(tree_l, top_tree_h, arr_l, arr_r, value);
-
+    int index = this->get(tree_l, top_tree_h, arr_l, og_height, value);
+    
     int top_tree_size = (1 << top_tree_h) - 1;
     int number_of_bottom_trees = top_tree_size + 1;
 
-    int bottom_tree_range_length = (arr_r - arr_l) >> top_tree_h;
-    int bottom_tree_index = (index - arr_l) / bottom_tree_range_length;
+    int bottom_tree_og_height = og_height - top_tree_h;
+    int bottom_tree_index = (index - arr_l) >> (bottom_tree_og_height - 1);
     int bottom_tree_size = (1 << bottom_tree_h) - 1;
 
     int bottom_tree_tree_l = tree_l + top_tree_size + (bottom_tree_index << bottom_tree_h) - bottom_tree_index;
-    int bottom_tree_arr_l = arr_l + bottom_tree_index * bottom_tree_range_length;
-    int bottom_tree_arr_r = bottom_tree_arr_l + bottom_tree_range_length;
+    int bottom_tree_arr_l = arr_l + (bottom_tree_index << (bottom_tree_og_height - 1));
 
     if(value <= tree[bottom_tree_tree_l]) {
-        return get(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_arr_r, value);
+        return get(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height , value);
     }
     else{
         bottom_tree_index += 1;
         bottom_tree_tree_l += bottom_tree_size;
-        bottom_tree_arr_l += bottom_tree_range_length;
-        bottom_tree_arr_r = bottom_tree_arr_l + bottom_tree_range_length;
-        return get(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_arr_r, value);
+        bottom_tree_arr_l += (1 << (bottom_tree_og_height - 1));
+        return get(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height , value);
     }
 }
 
 int CO_static_search_tree::get(int value) {
-    int result = this->get(0, this->height, 0, this->length, value);
+    int result = this->get(0, this->height, 0, this->height, value);
     return result;
 }
 
@@ -212,7 +199,7 @@ CA_static_search_tree::~CA_static_search_tree() {
     free(this->tree);
 }
 
-int CA_static_search_tree::merge(int value1, int value2) {
+inline int CA_static_search_tree::merge(int value1, int value2) {
     return max(value1, value2);
 }
 
@@ -362,7 +349,7 @@ void static_search_tree::print_tree() {
     printf("\n");
 }
 
-int static_search_tree::merge(int vlaue1, int value2) {
+inline int static_search_tree::merge(int vlaue1, int value2) {
     return max(vlaue1, value2);
 }
 
