@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include "static-search-trees.h"
 #include "perf_params.h"
-#include <time.h>
+// #include <time.h>
+#include <chrono>
 
 using namespace std;
 
@@ -31,9 +32,12 @@ void test(int n, int Q) {
 
 int main(){
     srand(10);
+    chrono::steady_clock::time_point begin = chrono::steady_clock::now();
     for (int run = 0; run < num_runs; ++run)
     {
         cout << "Run " << run << ": ";
         test(n, Q);
     }
+    chrono::steady_clock::time_point end = chrono::steady_clock::now();
+    cout << "Time difference = " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
 }

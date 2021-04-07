@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "static-search-trees.h"
 #include <time.h>
+#include <chrono>
 
 using namespace std;
 
@@ -173,11 +174,14 @@ void test_get_update_5() {
 
 int main() {
     srand(10);
+    chrono::steady_clock::time_point begin = chrono::steady_clock::now();
     test_get_update_1();
     test_get_update_2();
     test_get_update_3();
     test_get_update_4();
     test_get_update_5();
+    chrono::steady_clock::time_point end = chrono::steady_clock::now();
+    cout << "Time difference = " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
 
     return 0;
 }

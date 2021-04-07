@@ -8,7 +8,7 @@
 using namespace std;
 
 void test(int n, int Q) {
-    static_search_tree tree(n);
+    CA_static_search_tree tree(n);
 
     for (int i = 0; i < n; ++i) {
         tree.update(i, i);

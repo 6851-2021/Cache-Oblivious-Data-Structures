@@ -228,7 +228,7 @@ void CA_static_search_tree::update(int tree_l, int num_inner_nodes, int temp_roo
     int old_tree_l = tree_l, old_temp_root = temp_root;
     int mid = (arr_l + arr_r) / 2;
     int new_tree_l = 0, new_tree_r = 0;
-    if (h > 0 && (h+1) % 4 == 0) {
+    if (h > 0 && (h+1) & 3 == 0) {
         h++;
         int old_num_inner_nodes = num_inner_nodes;
         num_inner_nodes += (1 << (h-4));
@@ -287,7 +287,7 @@ int CA_static_search_tree::get(int tree_l, int num_inner_nodes, int temp_root, i
         return arr_l;
     }
     int mid = (arr_l + arr_r) / 2;
-    if (h > 0 && (h+1) % 4 == 0) {
+    if (h > 0 && (h+1) & 3 == 0) {
         h++;
         num_inner_nodes += (1 << (h-4));
         // update tree_l
