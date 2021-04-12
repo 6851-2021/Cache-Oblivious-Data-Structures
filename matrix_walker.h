@@ -3,7 +3,7 @@ class matrix_walker
 public: 
 };
 
-class matrix_walker_naive : public matrix_walker{
+class naive_matrix_walker : public matrix_walker{
 
     public:
         matrix_walker_naive(int n, int m);
@@ -13,6 +13,7 @@ class matrix_walker_naive : public matrix_walker{
         void move_up();
         void move_down();
         int get();
+        void set(int i, int j, int val);
 };
 
 class co_matrix_walker : public matrix_walker{
@@ -25,4 +26,5 @@ class co_matrix_walker : public matrix_walker{
         void move_up();
         void move_down();
         int get();
+        void set();
 };
