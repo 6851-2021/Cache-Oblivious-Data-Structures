@@ -14,5 +14,8 @@ perf: static-search-trees.h static-search-trees.cpp perf_sst.cpp perf_co_sst.cpp
 	g++ -O3 -flto -o perf_co_sst static-search-trees.cpp perf_co_sst.cpp
 	g++ -O3 -flto -o perf_ca_sst static-search-trees.cpp perf_ca_sst.cpp
 
+test_matrix_walker: matrix_walker.h matrix_walker.cpp matrix_walker_tester.cpp
+	g++ -O3 -flto -o test_matrix_walker matrix_walker.cpp matrix_walker_tester.cpp
+
 clean:
-	rm -f test_co_sst test_sst perf_sst perf_co_sst test_ca_sst perf_ca_sst
+	rm -f test_co_sst test_sst perf_sst perf_co_sst test_ca_sst perf_ca_sst test_matrix_walker
