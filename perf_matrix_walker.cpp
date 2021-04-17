@@ -32,15 +32,15 @@ int test_random(int n, long long q) {
             i-=1;
         }
 
-        //move left
-        while (j > 0) {
-            if(matrix->get() != i + 2*j) {
-                fprintf(stderr, "move left wrong\n");
-                return -1;
-            }
-            matrix->move_left();
-            j-=1;
-        }
+        // //move left
+        // while (j > 0) {
+        //     if(matrix->get() != i + 2*j) {
+        //         fprintf(stderr, "move left wrong\n");
+        //         return -1;
+        //     }
+        //     matrix->move_left();
+        //     j-=1;
+        // }
 
         //move down
         while (i < n-1) {
@@ -52,20 +52,20 @@ int test_random(int n, long long q) {
             i+=1;
         }
 
-        //move right
-        while (j < n-1) {
-            if(matrix->get() != i + 2*j) {
-                fprintf(stderr, "move right wrong\n");
-                return -1;
-            }
-            matrix->move_right();
-            j+=1;
-        }
+        // //move right
+        // while (j < n-1) {
+        //     if(matrix->get() != i + 2*j) {
+        //         fprintf(stderr, "move right wrong\n");
+        //         return -1;
+        //     }
+        //     matrix->move_right();
+        //     j+=1;
+        // }
     }
 
     return 0;
 }
 int main(){
     srand(10);
-    test_random(100, 100000);
+    test_random(20000, 100000);
 }

@@ -74,12 +74,12 @@ co_matrix_walker:: co_matrix_walker(int n) {
     this->value = 0;
     this->even_bits = 0;
     long long size = this->n_pw2 * this->n_pw2;
-    for (int i = 1; i < size; i <<= 2)
+    for (long long i = 1; i < size; i <<= 2)
     {
         this->even_bits |= i;
     }
     this->odd_bits = 0;
-    for (int i = 2; i < size; i <<= 2) {
+    for (long long i = 2; i < size; i <<= 2) {
         this->odd_bits |= i;
     }
 }
