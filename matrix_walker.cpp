@@ -2,14 +2,24 @@
 #include <stdlib.h> 
 #include <iostream>
 
-naive_matrix_walker:: naive_matrix_walker(int n, int m) {
+inline int next_power_of_2(unsigned int n) {
+    n--;
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    n |= n >> 16;
+    n++;
+    return n; 
+}
+
+naive_matrix_walker:: naive_matrix_walker(int n) {
     this->n = n;
-    this->m = m;
-    this->arr = (int*) malloc(n * m * sizeof(int));
+    this->arr = (int*) malloc(n * n * sizeof(int));
 }
 
 inline int naive_matrix_walker::translate(int i, int j) {
-    return i * this->m + j;
+    return i * this->n + j;
 }
 
 void naive_matrix_walker::teleport(int i, int j) {
@@ -19,21 +29,29 @@ void naive_matrix_walker::teleport(int i, int j) {
 }
 
 void naive_matrix_walker::move_left() {
+    if(this-> j == 0)
+        return;
     this->j = this->j - 1;
     this->value = *(this->arr + this->translate(this->i, this->j));
 }
 
 void naive_matrix_walker::move_right() {
+    if(this->j == this->n-1)
+        return;
     this->j = this->j + 1;
     this->value = *(this->arr + this->translate(this->i, this->j));
 }
 
 void naive_matrix_walker::move_up() {
+    if(this->i == 0)
+        return;
     this->i = this->i - 1;
     this->value = *(this->arr + this->translate(this->i, this->j));
 }
 
 void naive_matrix_walker::move_down() {
+    if(this->i == n - 1)
+        return;
     this->i = this->i + 1;
     this->value = *(this->arr + this->translate(this->i, this->j));
 }
@@ -46,17 +64,31 @@ void naive_matrix_walker::set(int i, int j, int value) {
 
 /***************************************************************************************************************/
 
-co_matrix_walker:: co_matrix_walker(int n, int m) {
+co_matrix_walker:: co_matrix_walker(int n) {
     this->n = n;
-    this->m = m;
-    this->arr = (int*) malloc(n * m * sizeof(int));
+    this->n_pw2 = next_power_of_2(n);
+    this->arr = (int *)malloc(this->n_pw2 * this->n_pw2 * sizeof(int));
+    this->i = 0;
+    this->j = 0;
+    this->z_value = 0;
+    this->value = 0;
+    this->even_bits = 0;
+    long long size = this->n_pw2 * this->n_pw2;
+    for (int i = 1; i < size; i <<= 2)
+    {
+        this->even_bits |= i;
+    }
+    this->odd_bits = 0;
+    for (int i = 2; i < size; i <<= 2) {
+        this->odd_bits |= i;
+    }
 }
 
 inline int co_matrix_walker::translate(int i, int j) {
     int top_left_i = 0;
     int top_left_j = 0;
-    int bottom_right_i = this->n;
-    int bottom_right_j = this->m;
+    int bottom_right_i = this->n_pw2;
+    int bottom_right_j = this->n_pw2;
     int block_index = 0;
     /*
     --------------
@@ -98,27 +130,40 @@ inline int co_matrix_walker::translate(int i, int j) {
 void co_matrix_walker::teleport(int i, int j) {
     this->i = i;
     this->j = j;
-    this->value = *(this->arr + this->translate(this->i, this->j));
+    this->z_value = this->translate(this->i, this->j);
+    this->value = *(this->arr + this->z_value);
 }
 
 void co_matrix_walker::move_left() {
+    if(this->j == 0)
+        return;
     this->j = this->j - 1;
-    this->value = *(this->arr + this->translate(this->i, this->j));
+    this->z_value = (((this->z_value & this->even_bits) - 1) & this->even_bits) | (this->z_value & this->odd_bits);
+    this->value = *(this->arr + this->z_value);
 }
 
 void co_matrix_walker::move_right() {
+    if(this->j == n - 1)
+        return;
     this->j = this->j + 1;
-    this->value = *(this->arr + this->translate(this->i, this->j));
+    this->z_value = (((this->z_value | this->odd_bits) + 1) & this->even_bits) | (this->z_value & this->odd_bits);
+    this->value = *(this->arr + this->z_value);
 }
 
 void co_matrix_walker::move_up() {
+    if(this->i == 0)
+        return;
     this->i = this->i - 1;
-    this->value = *(this->arr + this->translate(this->i, this->j));
+    this->z_value = (((this->z_value & this->odd_bits) - 1) & this->odd_bits) | (this->z_value & this->even_bits);
+    this->value = *(this->arr + this->z_value);
 }
 
 void co_matrix_walker::move_down() {
+    if(this->i == n-1)
+        return;
     this->i = this->i + 1;
-    this->value = *(this->arr + this->translate(this->i, this->j));
+    this->z_value = (((this->z_value | this->even_bits) + 1) & this->odd_bits) | (this->z_value & this->even_bits);
+    this->value = *(this->arr + this->z_value);
 }
 int co_matrix_walker::get() {
     return this->value;

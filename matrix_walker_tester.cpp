@@ -33,17 +33,17 @@ int verify(int i, int j, int res, int expected) {
 // }
 
 template <typename T>
-int test_teleport(int n, int m) {
-    T *matrix = new T(n, m);
+int test_teleport(int n) {
+    T *matrix = new T(n);
     for (int i = 0; i < n; i++)
     {
-        for (int j = 0; j < m; j++) {
+        for (int j = 0; j < n; j++) {
             matrix->set(i, j, i+j);
         }
     }
 
-    for (int i = n-1; i > 0; i--){
-        for (int j = 0; j < m; j++) {
+    for (int i = n-1; i >= 0; i--){
+        for (int j = 0; j < n; j++) {
             matrix->teleport(i, j);
             if (verify(i, j, matrix->get(), i+j)) {
                 return -1;
@@ -54,14 +54,78 @@ int test_teleport(int n, int m) {
     return 0;
 }
 
-int main() {
-    test_teleport<naive_matrix_walker>(100, 100);
-    test_teleport<co_matrix_walker>(100, 100);
+template <typename T>
+int test_move(int n) {
+    T *matrix = new T(n);
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++) {
+            matrix->set(i, j, i+j);
+        }
+    }
 
-    test_teleport<naive_matrix_walker>(500, 100);
-    test_teleport<co_matrix_walker>(500, 100);
+    matrix->teleport(n - 1, 0);
+    for (int i = n - 1; i >= 0; i--)
+    {
+        if((n - i) & 1) {
+            for (int j = 0; j < n; j++) {
+                if (verify(i, j, matrix->get(), i+j)) {
+                    return -1;
+                }
+                matrix->move_right();
+            }
+        } else {
+            for (int j = n - 1; j >= 0; j--) {
+                if (verify(i, j, matrix->get(), i+j)) {
+                    return -1;
+                }
+                matrix->move_left();
+            }
+        }
+        matrix->move_up();
+    }
+
+    matrix->teleport(0, 0);
+    for (int i = 0; i < n; i++)
+    {
+        if(!(i & 1)) {
+            for (int j = 0; j < n; j++) {
+                if (verify(i, j, matrix->get(), i+j)) {
+                    return -1;
+                }
+                matrix->move_right();
+            }
+        } else {
+            for (int j = n - 1; j >= 0; j--) {
+                if (verify(i, j, matrix->get(), i+j)) {
+                    return -1;
+                }
+                matrix->move_left();
+            }
+        }
+        matrix->move_down();
+    }
+    fprintf(stderr, "Success move test\n");
+    return 0;
+}
+
+int main() {
+    test_teleport<naive_matrix_walker>(100);
+    test_teleport<co_matrix_walker>(100);
+
+    test_teleport<naive_matrix_walker>(500);
+    test_teleport<co_matrix_walker>(500);
     
-    test_teleport<naive_matrix_walker>(1234, 700);
-    test_teleport<co_matrix_walker>(1234, 700);
+    test_teleport<naive_matrix_walker>(1234);
+    test_teleport<co_matrix_walker>(1234);
+
+    test_move<naive_matrix_walker>(100);
+    test_move<co_matrix_walker>(100);
+
+    test_move<naive_matrix_walker>(500);
+    test_move<co_matrix_walker>(500);
+    
+    test_move<naive_matrix_walker>(1234);
+    test_move<co_matrix_walker>(1234);
     return 0;
 }
