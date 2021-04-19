@@ -67,5 +67,5 @@ int test_random(int n, long long q) {
 }
 int main(){
     srand(10);
-    test_random(20000, 100000);
+    test_random(20000, 1000000);
 }

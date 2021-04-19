@@ -1,6 +1,7 @@
 #include "matrix_walker.h"
 #include <stdlib.h> 
 #include <iostream>
+#include <immintrin.h>
 
 inline int next_power_of_2(unsigned int n) {
     n--;
@@ -84,47 +85,63 @@ co_matrix_walker:: co_matrix_walker(int n) {
     }
 }
 
-inline int co_matrix_walker::translate(int i, int j) {
-    int top_left_i = 0;
-    int top_left_j = 0;
-    int bottom_right_i = this->n_pw2;
-    int bottom_right_j = this->n_pw2;
-    int block_index = 0;
-    /*
-    --------------
-    |  1   |  2  |
-    --------------
-    |  3   |  4  |
-    --------------
-    */
-    while (top_left_i != bottom_right_i - 1 && top_left_j != bottom_right_j - 1)
-    {
-        int mid_i = (top_left_i + bottom_right_i) >> 1;
-        int mid_j = (top_left_j + bottom_right_j) >> 1;
+uint64_t interleave_uint32_with_zeros(uint32_t input)  {
+    uint64_t word = input;
+    word = (word ^ (word << 16)) & 0x0000ffff0000ffff;
+    word = (word ^ (word << 8 )) & 0x00ff00ff00ff00ff;
+    word = (word ^ (word << 4 )) & 0x0f0f0f0f0f0f0f0f;
+    word = (word ^ (word << 2 )) & 0x3333333333333333;
+    word = (word ^ (word << 1 )) & 0x5555555555555555;
+    return word;
+}
 
-        if(i >= mid_i) {
-            block_index += (mid_i - top_left_i) * (bottom_right_j - top_left_j);
-            if(j >= mid_j) {
-                block_index += (mid_j - top_left_j) * (bottom_right_i - mid_i);
-                top_left_i = mid_i;
-                top_left_j = mid_j;
-            } else {
-                top_left_i = mid_i;
-                bottom_right_j = mid_j;
-            }
-        } else {
-            if(j >= mid_j) {
-                block_index += (mid_j - top_left_j) * (mid_i - top_left_i);
-                bottom_right_i = mid_i;
-                top_left_j = mid_j;
-            } else {
-                bottom_right_i = mid_i;
-                bottom_right_j = mid_j;
-            }
-        }
-    }
-    //at the end we might end up with a 1D block
-    return block_index + (i - top_left_i) + (j - top_left_j);
+int interleave(int x, int y) {
+    return interleave_uint32_with_zeros(x) 
+  | (interleave_uint32_with_zeros(y) << 1);
+}
+
+int co_matrix_walker::translate(int i, int j) {
+    return interleave(j, i);
+    // int top_left_i = 0;
+    // int top_left_j = 0;
+    // int bottom_right_i = this->n_pw2;
+    // int bottom_right_j = this->n_pw2;
+    // int block_index = 0;
+    // /*
+    // --------------
+    // |  1   |  2  |
+    // --------------
+    // |  3   |  4  |
+    // --------------
+    // */
+    // while (top_left_i != bottom_right_i - 1 && top_left_j != bottom_right_j - 1)
+    // {
+    //     int mid_i = (top_left_i + bottom_right_i) >> 1;
+    //     int mid_j = (top_left_j + bottom_right_j) >> 1;
+
+    //     if(i >= mid_i) {
+    //         block_index += (mid_i - top_left_i) * (bottom_right_j - top_left_j);
+    //         if(j >= mid_j) {
+    //             block_index += (mid_j - top_left_j) * (bottom_right_i - mid_i);
+    //             top_left_i = mid_i;
+    //             top_left_j = mid_j;
+    //         } else {
+    //             top_left_i = mid_i;
+    //             bottom_right_j = mid_j;
+    //         }
+    //     } else {
+    //         if(j >= mid_j) {
+    //             block_index += (mid_j - top_left_j) * (mid_i - top_left_i);
+    //             bottom_right_i = mid_i;
+    //             top_left_j = mid_j;
+    //         } else {
+    //             bottom_right_i = mid_i;
+    //             bottom_right_j = mid_j;
+    //         }
+    //     }
+    // }
+    // //at the end we might end up with a 1D block
+    // return block_index + (i - top_left_i) + (j - top_left_j);
 }
 
 void co_matrix_walker::teleport(int i, int j) {
