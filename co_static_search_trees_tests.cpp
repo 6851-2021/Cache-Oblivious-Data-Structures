@@ -99,8 +99,10 @@ void test_get_update_3() {
             tree.update(j, j);
         }
         for (int j = 0; j < t_size; j++) {
-            if (tree.get(j) != j) {
-                cout << "test_get_update_3 failed: expected value " << j << " at index " << j << ", tree size: " << t_size << endl;
+            int index = tree.get(j);
+            if (index != j)
+            {
+                cout << "test_get_update_3 failed: expected value " << j << " at index " << j << ", tree size: " << t_size <<", got: "<<index<< endl;
                 return;
             }
         }
@@ -125,8 +127,10 @@ void test_get_update_4() {
             tree.update(j, j*j);
         }
         for (int j = 0; j < t_size; j++) {
-            if (tree.get(j * j) != j) {
-                cout << "test_get_update_4 failed: expected value " << j*j << " at index " << j << ", tree size: " << t_size << endl;
+            int index = tree.get(j * j);
+            if (index != j)
+            {
+                cout << "test_get_update_4 failed: expected value " << j*j << " at index " << j << ", tree size: " << t_size <<", got: "<<index<< endl;
                 return;
             }
         }
