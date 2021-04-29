@@ -12,7 +12,6 @@ class CO_static_search_tree {
         int size;
         int height;
         int block_index_memo[40];
-        int arr_l_memo[40];
 
         int merge(int vlaue1, int value2);
         int update(int tree_l, int h, int arr_l,  int og_height, int index, int value);
@@ -25,6 +24,7 @@ class CO_static_search_tree {
         int get_4_base_case(int tree_l, int h, int arr_l, int og_height, int value);
 
         int get_tree_height_pwr_2(int block_index, int h, int arr_l, int og_height, int value);
+        int update_tree_height_pwr_2(int block_index, int h, int arr_l, int og_height, int index, int value);
         int left_child(int block_index, int depth, int path);
         int right_child(int block_index, int depth, int path);
 
