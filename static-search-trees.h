@@ -47,6 +47,45 @@ class CO_static_search_tree {
         int get(int value);
 };
 
+
+class built_co_static_search_tree {
+    private:
+        typedef struct {
+            int value;
+            int left;
+            int right;
+        } node;
+
+        node *tree;
+        int *temp_tree;
+        int n;
+        int length;
+        int size;
+        int height;
+
+        void van_emde_boas_build(int tree_l, int h, int og_height, int bfs_order);
+        void build(int index, int h);
+        void update(int current_node, int h, int index, int value);
+
+    public:
+        ~built_co_static_search_tree();
+        /*
+    Init a cache obilvious static search tree with size equal to
+    the next power of 2 greater than n
+    */
+        built_co_static_search_tree(int n);
+        /*
+    Update the value at the given index
+    */
+        void update(int index, int value);
+
+        /*
+    Return the index of the successor of the value in the array.
+    If successor does not exists return NOT_FOUND_INDEX
+    */
+        int get(int value);
+};
+
 // Cache-aware (hopefully optimal) static search tree. This is essentially
 // a static search tree of subtrees, each of height 3 (4 levels or 15 nodes
 // total). Each subtree is stored in an adjacent array slice, so we can index
