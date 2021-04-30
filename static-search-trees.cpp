@@ -387,7 +387,7 @@ built_co_static_search_tree::built_co_static_search_tree(int n) {
     this->length = next_power_of_2(n);
     this->size = this->length * 2;
     this->height = log2(this->length) + 1;
-    this->tree = (node *)malloc(sizeof(node) * this->size);
+    this->tree = (int *)malloc(sizeof(int) * this->size * 3);
     this->temp_tree = (int *)malloc(sizeof(int) * this->size);
     this->van_emde_boas_build(0, this->height, this->height, 1);
     this->build(1, this->height);
@@ -428,23 +428,23 @@ void built_co_static_search_tree::build(int index, int h) {
         return;
     }
     int van_emde_boas_index = this->temp_tree[index];
-    this->tree[van_emde_boas_index].left = this->temp_tree[index << 1];
-    this->tree[van_emde_boas_index].right = this->temp_tree[(index << 1) + 1];
+    this->tree[van_emde_boas_index * 3 + 1] = this->temp_tree[index << 1] * 3;
+    this->tree[van_emde_boas_index * 3 + 2] = this->temp_tree[(index << 1) + 1] * 3;
     this->build(index << 1, h-1);
     this->build((index << 1) + 1, h-1);
 }
 
 void built_co_static_search_tree::update(int current_node, int h, int index, int value) {
     if(h == 1) {
-        this->tree[current_node].value = value;
+        this->tree[current_node] = value;
         return;
     }
     if(index & (1 << (h - 2))) {
-        this->update(this->tree[current_node].right, h - 1, index, value);
+        this->update(this->tree[current_node + 2], h - 1, index, value);
     } else {
-        this->update(this->tree[current_node].left, h - 1, index, value);
+        this->update(this->tree[current_node + 1], h - 1, index, value);
     }
-    this->tree[current_node].value = max(this->tree[this->tree[current_node].left].value, this->tree[this->tree[current_node].right].value);
+    this->tree[current_node] = max(this->tree[this->tree[current_node + 1]], this->tree[this->tree[current_node + 2]]);
 }
 
 void built_co_static_search_tree::update(int index, int value) {
@@ -456,14 +456,14 @@ int built_co_static_search_tree::get(int value) {
     int index = 0;
     for (int i = 0; i < this->height - 1; ++i)
     {
-        if (value <= this->tree[this->tree[current_node].left].value)
+        if (value <= this->tree[this->tree[current_node + 1]])
         {
-            current_node = this->tree[current_node].left;
+            current_node = this->tree[current_node + 1];
             index <<= 1;
         }
         else
         {
-            current_node = this->tree[current_node].right;
+            current_node = this->tree[current_node + 2];
             index <<= 1;
             index += 1;
         }

@@ -49,6 +49,7 @@ if __name__ == '__main__':
     perf.record_cache("./perf_co_sst")
     perf.record_cache("./perf_sst")
     perf.record_cache("./perf_ca_sst")
+    perf.record_cache("./perf_built_co_sst")
     print(perf)
     # if len(argv) > 1:
     #     perf = PerfObj()

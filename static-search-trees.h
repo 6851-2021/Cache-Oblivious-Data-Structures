@@ -56,7 +56,7 @@ class built_co_static_search_tree {
             int right;
         } node;
 
-        node *tree;
+        int *tree;
         int *temp_tree;
         int n;
         int length;
