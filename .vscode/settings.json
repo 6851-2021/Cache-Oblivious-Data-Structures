@@ -3,6 +3,7 @@
         "iostream": "cpp",
         "ostream": "cpp",
         "chrono": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "orderedfilemaintenance.c": "cpp"
     }
 }

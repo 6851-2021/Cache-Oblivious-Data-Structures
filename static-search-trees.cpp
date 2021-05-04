@@ -27,6 +27,9 @@ CO_static_search_tree::CO_static_search_tree(int n) {
     this->size = this->length * 2;
     this->height = log2(this->length) + 1;
     this->tree = (int *)malloc(sizeof(int) * this->size);
+    for (int i = 0; i < this->size; ++i) {
+        this->tree[i] = -1;
+    }
 }
 
 CO_static_search_tree::~CO_static_search_tree() {
@@ -300,6 +303,13 @@ int CO_static_search_tree::get(int value) {
     int result = this->get(0, this->height, 0, this->height, value);
     return result;
 }
+
+void CO_static_search_tree::range_update(int l, int r, int *items) {
+    for (int i = l; i < r; ++i) {
+        this->update(i, items[i]);
+    }
+}
+
 
 inline int CO_static_search_tree::left_child(int block_index, int depth, int path) {
     if (depth & 1){

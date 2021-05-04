@@ -45,8 +45,9 @@ class CO_static_search_tree {
     If successor does not exists return NOT_FOUND_INDEX
     */
         int get(int value);
-};
 
+        void range_update(int l, int r, int *items);
+};
 
 class built_co_static_search_tree {
     private:

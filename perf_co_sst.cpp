@@ -16,7 +16,7 @@ void test(int n, int Q) {
 
     for (int query = 0; query < Q; ++query)
     {
-        int type = rand() % 2;
+        int type = 0;
         int index = rand() % n;
         if(type == 0) {
             tree.update(index, index);

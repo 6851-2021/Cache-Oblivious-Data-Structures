@@ -39,5 +39,8 @@ main: static-search-trees.h static-search-trees.cpp  matrix_walker.h matrix_walk
 test_built_co_sst: static-search-trees.h static-search-trees.cpp test_built_co_sst.cpp
 	g++ ${CXXFLAGS} static-search-trees.cpp test_built_co_sst.cpp -o ./test_built_co_sst
 
+test_dynamic_search_tree: static-search-trees.h static-search-trees.cpp dynamic_search_tree.h dynamic_search_tree.cpp test_dynamic_search_tree.cpp ordered-file-maintenance-in-c/OrderedFileMaintenance.h ordered-file-maintenance-in-c/OrderedFileMaintenance.cpp
+	g++ ${CXXFLAGS} static-search-trees.cpp dynamic_search_tree.cpp test_dynamic_search_tree.cpp ordered-file-maintenance-in-c/OrderedFileMaintenance.cpp -o ./test_dynamic_search_tree 
+
 clean:
 	rm -f test_co_sst test_sst perf_sst perf_co_sst test_ca_sst perf_ca_sst test_matrix_walker
