@@ -1,5 +1,6 @@
 #include<iostream>
 #include<math.h>
+#include<vector>
 using namespace std;
 
 const int NOT_FOUND_INDEX = -1;
@@ -47,6 +48,12 @@ class CO_static_search_tree {
         int get(int value);
 };
 
+typedef struct Triplet {
+    int parent;
+    int left;
+    int right;
+} triplet;
+
 // Cache-aware (hopefully optimal) static search tree. This is essentially
 // a static search tree of subtrees, each of height 3 (4 levels or 15 nodes
 // total). Each subtree is stored in an adjacent array slice, so we can index
@@ -58,6 +65,7 @@ class CA_static_search_tree {
         int length;
         int size;
         int height;
+        std::vector<Triplet> parents;
 
         int merge(int value1, int value2);
         void update(int tree_l, int num_inner_nodes, int temp_root, int h, int arr_l, int arr_r, int index, int value);
