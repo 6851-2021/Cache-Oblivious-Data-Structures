@@ -3,7 +3,7 @@
 
 class co_dynamic_serach_tree {
     private:
-        int n;
+        int N;
         list_t list;
         CO_static_search_tree *tree;
     public:

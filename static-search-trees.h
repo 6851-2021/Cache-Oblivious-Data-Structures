@@ -29,6 +29,8 @@ class CO_static_search_tree {
         int left_child(int block_index, int depth, int path);
         int right_child(int block_index, int depth, int path);
 
+        
+
     public:
         ~CO_static_search_tree();
         /*
@@ -48,6 +50,9 @@ class CO_static_search_tree {
         int get(int value);
 
         void range_update(int l, int r, int *items);
+
+        void print();
+    
 };
 typedef struct Triplet {
     int parent;

@@ -306,7 +306,7 @@ int CO_static_search_tree::get(int value) {
 }
 
 void CO_static_search_tree::range_update(int l, int r, int *items) {
-    for (int i = l; i < r; ++i) {
+    for (int i = l; i <= r; ++i) {
         this->update(i, items[i]);
     }
 }
@@ -390,6 +390,12 @@ int CO_static_search_tree::get_tree_height_pwr_2(int block_index, int h, int arr
         depth += 1;
     }
     return arr_l;
+}
+
+void CO_static_search_tree::print() {
+    for (int i = 0; i < this->size; ++i) {
+        printf("Node %d: %d\n", i + 1, this->tree[i]);
+    }
 }
 //-----------------------------------------------------------------------
 
