@@ -147,7 +147,10 @@ int CO_static_search_tree::update(int tree_l, int h, int arr_l, int og_height, i
     if(h == 4) {
         return this->update_4_base_case(tree_l, h, arr_l, og_height, index, value);
     }
-
+    
+    // if((h & (h - 1)) == 0) {
+    //     return this->update_tree_height_pwr_2(tree_l, h, arr_l, og_height, index, value);
+    // }
     //update bottom tree
     int bottom_tree_h = bottom_tree_h_memo[h];
     // int bottom_tree_h = next_power_of_2((int)ceil(h / 2));
@@ -163,7 +166,9 @@ int CO_static_search_tree::update(int tree_l, int h, int arr_l, int og_height, i
     int bottom_tree_tree_l = tree_l + top_tree_size + (bottom_tree_index << bottom_tree_h) - bottom_tree_index;
     int bottom_tree_arr_l = arr_l + (bottom_tree_index << (bottom_tree_og_height - 1));
 
+    // int child_value = this->update_tree_height_pwr_2(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, index, value);
     int child_value = this->update(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, index, value);
+
 
     //get adjacent child
     int adjacent_child_value;
@@ -261,6 +266,9 @@ int CO_static_search_tree::get(int tree_l, int h, int arr_l, int og_height, int 
         return this->get_4_base_case(tree_l, h, arr_l, og_height, value);
     }
 
+    // if((h & (h - 1)) == 0) {
+    //     return this->get_tree_height_pwr_2(tree_l, h, arr_l, og_height, value);
+    // }
     int bottom_tree_h = bottom_tree_h_memo[h];
     int top_tree_h = h - bottom_tree_h;
 
@@ -277,13 +285,15 @@ int CO_static_search_tree::get(int tree_l, int h, int arr_l, int og_height, int 
 
     if (value <= tree[bottom_tree_tree_l])
     {
-        return this->get_tree_height_pwr_2(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, value);
+        // return this->get_tree_height_pwr_2(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, value);
+        return this->get(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, value);
     }
     else{
         bottom_tree_index += 1;
         bottom_tree_tree_l += bottom_tree_size;
         bottom_tree_arr_l += (1 << (bottom_tree_og_height - 1));
-        return this->get_tree_height_pwr_2(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, value);
+        // return this->get_tree_height_pwr_2(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, value);
+        return this->get(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, value);
     }
 }
 
@@ -292,9 +302,8 @@ int CO_static_search_tree::get(int value) {
     return result;
 }
 
-int CO_static_search_tree::left_child(int block_index, int depth, int path) {
-    if (depth & 1)
-    {
+inline int CO_static_search_tree::left_child(int block_index, int depth, int path) {
+    if (depth & 1){
         return block_index + 1;
     }
     int biggest_leaving_block_h = (depth & ~(depth - 1));
@@ -304,22 +313,55 @@ int CO_static_search_tree::left_child(int block_index, int depth, int path) {
     return left_child_block_index;
 }
 
-int CO_static_search_tree::right_child(int block_index, int depth, int path) {
-    if (depth & 1)
-    {
+inline int CO_static_search_tree::right_child(int block_index, int depth, int path) {
+    if (depth & 1){
         return block_index + 2;
     }
     int biggest_leaving_block_h = (depth & ~(depth - 1));
-    int bottom_tree_index = ((path << 1) + 1) & ((1 << biggest_leaving_block_h) - 1);
+    int bottom_tree_index = ((path << 1) | 1) & ((1 << biggest_leaving_block_h) - 1);
     int next_big_block_index = this->block_index_memo[depth + 1 - biggest_leaving_block_h];
     int right_child_block_index = next_big_block_index + ((bottom_tree_index + 1) << biggest_leaving_block_h) - (bottom_tree_index + 1);
     return right_child_block_index;
 }
 
+int CO_static_search_tree::update_tree_height_pwr_2(int block_index, int h, int arr_l, int og_height, int index, int value) {
+    int inner_block_index = 0;
+    int depth = 1;
+    int path = 0;
+    int length = (1 << (og_height - 2));
+    while (depth != h)
+    {
+        this->block_index_memo[depth] = inner_block_index;
+        if (index < arr_l + length)
+        {
+            inner_block_index = this->left_child(inner_block_index, depth, path);
+            path <<= 1;
+        }
+        else {
+            inner_block_index = this->right_child(inner_block_index, depth, path);
+            path = (path << 1) | 1;
+            arr_l += length;
+        }
+        length >>= 1;
+        depth += 1;
+    }
+    this->tree[block_index + inner_block_index] = value;
+    for (int i = h - 1; i >= 1; --i) {
+        path >>= 1;
+        int inner_block_index = this->block_index_memo[i];
+        int left_child_inner_block_index = this->left_child(inner_block_index, i, path);
+        int right_child_inner_block_index = this->right_child(inner_block_index, i, path);
+        this->tree[block_index + inner_block_index] = max(this->tree[block_index + left_child_inner_block_index], this->tree[block_index + right_child_inner_block_index]);
+    }
+    return this->tree[block_index];
+}
+
+
 int CO_static_search_tree::get_tree_height_pwr_2(int block_index, int h, int arr_l, int og_height, int value) {
     int inner_block_index = 0;
     int depth = 1;
     int path = 0;
+    int length = (1 << (og_height - 2));
     while (depth != h)
     {
         this->block_index_memo[depth] = inner_block_index;
@@ -331,13 +373,103 @@ int CO_static_search_tree::get_tree_height_pwr_2(int block_index, int h, int arr
         }
         else {
             inner_block_index = this->right_child(inner_block_index, depth, path);
-            path = (path << 1) + 1;
-            arr_l += (1 << (og_height - 2));
+            path = (path << 1) | 1;
+            arr_l += length;
         }
-        og_height -= 1;
+        length >>= 1;
         depth += 1;
     }
     return arr_l;
+}
+//-----------------------------------------------------------------------
+
+built_co_static_search_tree::built_co_static_search_tree(int n) {
+    this->n = n;
+    this->length = next_power_of_2(n);
+    this->size = this->length * 2;
+    this->height = log2(this->length) + 1;
+    this->tree = (int *)malloc(sizeof(int) * this->size * 3);
+    this->temp_tree = (int *)malloc(sizeof(int) * this->size);
+    this->van_emde_boas_build(0, this->height, this->height, 1);
+    this->build(1, this->height);
+    free(this->temp_tree);
+}
+
+built_co_static_search_tree::~built_co_static_search_tree () {
+    free(this->tree);
+}
+
+void built_co_static_search_tree::van_emde_boas_build(int tree_l, int h, int og_height, int bfs_order) {
+    if (h == 1)
+    {
+        this->temp_tree[bfs_order] = tree_l;
+        return;
+    }
+
+    int bottom_tree_h = bottom_tree_h_memo[h];
+    int top_tree_h = h - bottom_tree_h;
+
+    this->van_emde_boas_build(tree_l, top_tree_h, og_height, bfs_order);
+    
+    int top_tree_size = (1 << top_tree_h) - 1;
+
+    int bottom_tree_og_height = og_height - top_tree_h;
+    int bottom_tree_size = (1 << bottom_tree_h) - 1;
+    int bottom_tree_tree_l = tree_l + top_tree_size;
+
+    for (int bottom_tree_index = 0; bottom_tree_index < (1 << top_tree_h); ++bottom_tree_index) {
+        int bottom_tree_bfs_order = (bfs_order << top_tree_h) | bottom_tree_index;
+        this->van_emde_boas_build(bottom_tree_tree_l, bottom_tree_h, bottom_tree_og_height, bottom_tree_bfs_order);
+        bottom_tree_tree_l += bottom_tree_size;
+    }
+}
+
+void built_co_static_search_tree::build(int index, int h) {
+    if(h == 1) {
+        return;
+    }
+    int van_emde_boas_index = this->temp_tree[index];
+    this->tree[van_emde_boas_index * 3 + 1] = this->temp_tree[index << 1] * 3;
+    this->tree[van_emde_boas_index * 3 + 2] = this->temp_tree[(index << 1) + 1] * 3;
+    this->build(index << 1, h-1);
+    this->build((index << 1) + 1, h-1);
+}
+
+void built_co_static_search_tree::update(int current_node, int h, int index, int value) {
+    if(h == 1) {
+        this->tree[current_node] = value;
+        return;
+    }
+    if(index & (1 << (h - 2))) {
+        this->update(this->tree[current_node + 2], h - 1, index, value);
+    } else {
+        this->update(this->tree[current_node + 1], h - 1, index, value);
+    }
+    this->tree[current_node] = max(this->tree[this->tree[current_node + 1]], this->tree[this->tree[current_node + 2]]);
+}
+
+void built_co_static_search_tree::update(int index, int value) {
+    this->update(0, this->height, index, value);
+}
+
+int built_co_static_search_tree::get(int value) {
+    int current_node = 0;
+    int index = 0;
+    for (int i = 0; i < this->height - 1; ++i)
+    {
+        if (value <= this->tree[this->tree[current_node + 1]])
+        {
+            current_node = this->tree[current_node + 1];
+            index <<= 1;
+        }
+        else
+        {
+            current_node = this->tree[current_node + 2];
+            index <<= 1;
+            index += 1;
+        }
+    }
+    return index;
 }
 
 //-----------------------------------------------------------------------
