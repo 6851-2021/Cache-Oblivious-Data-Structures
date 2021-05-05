@@ -67,5 +67,8 @@ int test_random(int n, long long q) {
 }
 int main(){
     srand(10);
-    test_random(20000, 1000000);
+    int n;
+    long long q;
+    std::cin >> n >> q;
+    test_random(n, q);
 }
