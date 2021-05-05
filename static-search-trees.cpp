@@ -301,6 +301,9 @@ int CO_static_search_tree::get(int tree_l, int h, int arr_l, int og_height, int 
 }
 
 int CO_static_search_tree::get(int value) {
+    if(value > this->tree[0]) {
+        return -1;
+    }
     int result = this->get(0, this->height, 0, this->height, value);
     return result;
 }

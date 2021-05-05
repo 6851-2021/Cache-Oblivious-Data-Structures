@@ -43,4 +43,4 @@ test_dynamic_search_tree: static-search-trees.h static-search-trees.cpp dynamic_
 	g++ ${CXXFLAGS} static-search-trees.cpp dynamic_search_tree.cpp test_dynamic_search_tree.cpp ordered-file-maintenance-in-c/OrderedFileMaintenance.cpp -o ./test_dynamic_search_tree 
 
 clean:
-	rm -f test_co_sst test_sst perf_sst perf_co_sst test_ca_sst perf_ca_sst test_matrix_walker
+	rm -f test_co_sst test_sst perf_sst perf_co_sst test_ca_sst perf_ca_sst test_matrix_walker test_dynamic_search_tree
