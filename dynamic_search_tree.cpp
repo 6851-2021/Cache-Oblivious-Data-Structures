@@ -30,7 +30,7 @@ void co_dynamic_serach_tree::add(int value) {
         this->N = this->list.N;
         delete (this->tree);
         this->tree = new CO_static_search_tree(this->N);
-        this->tree->range_update(0, this->N -1, this->list.items);
+        this->tree->range_update(0, this->N - 1, this->list.items);
     }
     else
     {
@@ -39,7 +39,6 @@ void co_dynamic_serach_tree::add(int value) {
         if(debug) cout << this->list.min_index << " " << this->list.max_index<< endl;
 
         this->tree->range_update(this->list.min_index, this->list.max_index, this->list.items);
-        // this->tree->range_update(0, this->N -1, this->list.items);
     }
 
     if(debug) printf("OFM:\n");

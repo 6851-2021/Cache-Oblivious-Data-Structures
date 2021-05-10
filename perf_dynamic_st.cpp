@@ -17,6 +17,7 @@
 #include <chrono>
 #include <set>
 #include <algorithm>
+#include <limits.h>
 
 #define RAND_SEED_FREQ 10000
 #define RAND_NUM_LIMIT 1000000
@@ -129,7 +130,7 @@ void test_add_n_rand_then_query_Q_rand(int n, int Q) {
 // Make the calls to all the performance tests here.
 void run() {
 	cout << "Running performance tests on dynamic search trees\n";
-	test_add_n_rand(n, Q);
+	test_add_n_rand(n);
 	test_add_n_rand_then_query_Q_rand(n, Q);
 }
 
