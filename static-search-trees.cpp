@@ -311,22 +311,10 @@ int CO_static_search_tree::get(int value) {
 }
 
 void CO_static_search_tree::range_update(int tree_l, int h, int arr_l,  int og_height, int range_left, int range_right, int* items) {
-    // cout << "Block Index: " << tree_l << endl;
-    // cout << "Rectangle Height: " << h << endl;
-    // cout << "Node left Index: " << arr_l << endl;
-    // cout << "Original Height: " << og_height << endl;
-    // cout << "Range left: " << range_left << endl;
-    // cout << "Range Reight: " << range_right << endl;
-    // cout << "Arr for update: ";
-    // for (int i = 0; i < this->n; ++i) {
-    //     cout << items[i] << " ";
-    // }
-    // cout << "\n\n";
     if (h == 1)
     {
 
         this->tree[tree_l] = items[arr_l];
-        // cout << "Update Success\n";
         return;
     }
 
@@ -343,14 +331,9 @@ void CO_static_search_tree::range_update(int tree_l, int h, int arr_l,  int og_h
     int bottom_tree_index_range_left = (range_left - arr_l) >> (bottom_tree_og_height - 1);
     int bottom_tree_index_range_right = (range_right - arr_l) >> (bottom_tree_og_height - 1);
 
-    // cout << "Bottom Indices Range: " << bottom_tree_index_range_left << " " << bottom_tree_index_range_right << endl
-    //      << endl;
-
     for (int bottom_tree_index = bottom_tree_index_range_left; bottom_tree_index <= bottom_tree_index_range_right; ++bottom_tree_index) {
         int bottom_tree_tree_l = tree_l + top_tree_size + (bottom_tree_index << bottom_tree_h) - bottom_tree_index;
         int bottom_tree_arr_l = arr_l + (bottom_tree_index << (bottom_tree_og_height - 1));
-        // cout << "Going to tree at idnex " << bottom_tree_tree_l << " of height " << bottom_tree_h << endl
-        //      << endl;
         this->range_update(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, max(range_left, bottom_tree_arr_l), min(range_right, bottom_tree_arr_l + (1 << (bottom_tree_og_height - 1)) - 1), items);
     }
 
@@ -360,7 +343,6 @@ void CO_static_search_tree::range_update(int tree_l, int h, int arr_l,  int og_h
     {
         int bottom_tree_tree_l = tree_l + top_tree_size + (bottom_tree_index << bottom_tree_h) - bottom_tree_index;
         int bottom_tree_arr_l = arr_l + (bottom_tree_index << (bottom_tree_og_height - 1));
-        // cout << "Update Arr index: " << bottom_tree_arr_l << " with trees at block index " << bottom_tree_tree_l << " " << bottom_tree_tree_l + bottom_tree_size << endl;
         items[bottom_tree_arr_l] = max(this->tree[bottom_tree_tree_l], this->tree[bottom_tree_tree_l + bottom_tree_size]);
     }
 
