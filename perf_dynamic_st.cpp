@@ -37,6 +37,9 @@ void insert_n_dyn_search_tree(int n, co_dynamic_serach_tree &tree) {
 		}
 		int elem = rand() % RAND_NUM_LIMIT;
 		tree.add(elem);
+		if(i % (n / 100) == 0) {
+			cout << "Progress CO" << i<< endl;
+		}
 	}
 }
 
@@ -48,6 +51,9 @@ void insert_n_std_set(int n, set<int> &tree) {
 		}
 		int elem = rand() % RAND_NUM_LIMIT;
 		tree.insert(elem);
+		if(i % (n / 100) == 0) {
+			cout << "Progress std::Set" << i<< endl;
+		}
 	}
 }
 

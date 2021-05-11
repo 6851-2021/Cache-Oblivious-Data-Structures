@@ -8,11 +8,13 @@ const int NOT_FOUND_INDEX = -1;
 class CO_static_search_tree {
     private:
         int *tree;
+        int *array;
         int n;
         int length;
         int size;
         int height;
         int block_index_memo[40];
+        
 
         int merge(int vlaue1, int value2);
         int update(int tree_l, int h, int arr_l,  int og_height, int index, int value);
@@ -29,7 +31,7 @@ class CO_static_search_tree {
         int left_child(int block_index, int depth, int path);
         int right_child(int block_index, int depth, int path);
 
-        
+        void range_update(int tree_l, int h, int arr_l,  int og_height, int range_left, int range_right, int* items);
 
     public:
         ~CO_static_search_tree();
