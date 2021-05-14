@@ -3,7 +3,7 @@
 #include <iostream>
 
 int test_random(int n, long long q) {
-    #if CO
+    #if DCO
         co_matrix_walker *matrix = new co_matrix_walker(n);
     #else
         naive_matrix_walker *matrix = new naive_matrix_walker(n);
@@ -62,7 +62,7 @@ int test_random(int n, long long q) {
         //     j+=1;
         // }
     }
-
+    fprintf(stderr, "Success!\n");
     return 0;
 }
 int main(){

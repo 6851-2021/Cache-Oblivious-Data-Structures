@@ -48,7 +48,7 @@ perf_std_set: perf_std_set.cpp
 MWDIR = matrix_walker
 
 perf_co_matrix_walker: ${MWDIR}/matrix_walker.h ${MWDIR}/matrix_walker.cpp ${MWDIR}/perf_matrix_walker.cpp
-	g++ ${CXXFLAGS} -CO ${MWDIR}/matrix_walker.cpp ${MWDIR}/perf_matrix_walker.cpp -o perf_co_matrix_walker
+	g++ ${CXXFLAGS} -DCO ${MWDIR}/matrix_walker.cpp ${MWDIR}/perf_matrix_walker.cpp -o perf_co_matrix_walker
 
 perf_naive_matrix_walker: ${MWDIR}/matrix_walker.h ${MWDIR}/matrix_walker.cpp ${MWDIR}/perf_matrix_walker.cpp
 	g++ ${CXXFLAGS} ${MWDIR}/matrix_walker.cpp ${MWDIR}/perf_matrix_walker.cpp -o perf_naive_matrix_walker
