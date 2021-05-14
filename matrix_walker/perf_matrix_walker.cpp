@@ -3,7 +3,7 @@
 #include <iostream>
 
 int test_random(int n, long long q) {
-    #if PERF
+    #if CO
         co_matrix_walker *matrix = new co_matrix_walker(n);
     #else
         naive_matrix_walker *matrix = new naive_matrix_walker(n);
