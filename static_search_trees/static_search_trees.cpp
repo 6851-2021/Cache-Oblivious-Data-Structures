@@ -654,7 +654,7 @@ void CA_static_search_tree::print_tree() {
 
 //-----------------------------------------------------------------------
 
-static_search_tree::static_search_tree(int n, bool recursive) {
+simple_static_search_tree::simple_static_search_tree(int n, bool recursive) {
     this->n = n;
     this->recursive = recursive;
     this->length = next_power_of_2(n);
@@ -663,11 +663,11 @@ static_search_tree::static_search_tree(int n, bool recursive) {
     this->tree = (int *)malloc(sizeof(int) * this->size);
 }
 
-static_search_tree::~static_search_tree() {
+simple_static_search_tree::~simple_static_search_tree() {
     free(this->tree);
 }
 
-void static_search_tree::print_tree() {
+void simple_static_search_tree::print_tree() {
     int start = 1;
     // printf("")
     for (int i = 1; i < this->size; i++) {
@@ -676,11 +676,11 @@ void static_search_tree::print_tree() {
     printf("\n");
 }
 
-inline int static_search_tree::merge(int vlaue1, int value2) {
+inline int simple_static_search_tree::merge(int vlaue1, int value2) {
     return max(vlaue1, value2);
 }
 
-void static_search_tree::update_recursive(int tree_l, int arr_l, int arr_r, int index, int value) {
+void simple_static_search_tree::update_recursive(int tree_l, int arr_l, int arr_r, int index, int value) {
     if (arr_l == arr_r)
     {
         this->tree[tree_l] = value;
@@ -702,7 +702,7 @@ void static_search_tree::update_recursive(int tree_l, int arr_l, int arr_r, int 
     this->tree[tree_l] = this->merge(this->tree[left_child], this->tree[right_child]);
 }
 
-void static_search_tree::update_iterative(int tree_l, int arr_l, int arr_r, int index, int value) {
+void simple_static_search_tree::update_iterative(int tree_l, int arr_l, int arr_r, int index, int value) {
     while(arr_l != arr_r) {
         int mid = (arr_l + arr_r) >> 1;
         int left_child = tree_l << 1;
@@ -725,7 +725,7 @@ void static_search_tree::update_iterative(int tree_l, int arr_l, int arr_r, int 
     }
 }
 
-int static_search_tree::get_recursive(int tree_l, int arr_l, int arr_r, int value) {
+int simple_static_search_tree::get_recursive(int tree_l, int arr_l, int arr_r, int value) {
     if (arr_l == arr_r)
     {
         return arr_l;
@@ -742,7 +742,7 @@ int static_search_tree::get_recursive(int tree_l, int arr_l, int arr_r, int valu
     }
 }
 
-int static_search_tree::get_iterative(int tree_l, int arr_l, int arr_r, int value) {
+int simple_static_search_tree::get_iterative(int tree_l, int arr_l, int arr_r, int value) {
     while(arr_l != arr_r) {
         int mid = (arr_l + arr_r) >> 1;
         int left_child = tree_l << 1;
@@ -759,7 +759,7 @@ int static_search_tree::get_iterative(int tree_l, int arr_l, int arr_r, int valu
     return arr_l;
 }
 
-void static_search_tree:: update(int index, int value){
+void simple_static_search_tree:: update(int index, int value){
     if (this->recursive)
     {
         this->update_recursive(1, 0, this->length - 1, index, value);
@@ -770,7 +770,7 @@ void static_search_tree:: update(int index, int value){
     }
 }
 
-int static_search_tree::get(int value) {
+int simple_static_search_tree::get(int value) {
     if(this->recursive) {
         int result = this->get_recursive(1, 0, this->length - 1, value);
         return result;
@@ -779,4 +779,16 @@ int static_search_tree::get(int value) {
         int result = this->get_iterative(1, 0, this->length - 1, value);
         return result;
     }
+}
+
+void map_rep_static_search_tree::update(int index, int value) {
+    this->m[value] = index;
+}
+
+int map_rep_static_search_tree::get(int value) {
+    auto it = this->m.lower_bound(value);
+    if(it == m.end()) {
+        return NOT_FOUND_INDEX;
+    }
+    return it->second;
 }

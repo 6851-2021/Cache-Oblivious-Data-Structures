@@ -1,6 +1,7 @@
 #include<iostream>
 #include<math.h>
 #include<vector>
+#include<map>
 using namespace std;
 
 const int NOT_FOUND_INDEX = -1;
@@ -285,7 +286,7 @@ class CA_static_search_tree {
     int get(int value);
 };
 
-class static_search_tree {
+class simple_static_search_tree {
     private:
         int *tree;
         int n;
@@ -303,12 +304,12 @@ class static_search_tree {
         int get_iterative(int tree_l, int arr_l, int arr_r, int value);
 
     public:
-        ~static_search_tree();
+        ~simple_static_search_tree();
         /*
     Init a cache obilvious static search tree with size equal to
     the next power of 2 greater than n
     */
-        static_search_tree(int n, bool recursive);
+        simple_static_search_tree(int n, bool recursive);
 
         /*
     Print the tree defined array values.
@@ -326,3 +327,21 @@ class static_search_tree {
     */
         int get(int value);
 };
+
+class map_rep_static_search_tree {
+    private:
+        map<int, int> m;
+
+    public:
+        /*
+    Update the value at the given index
+    */
+        void update(int index, int value);
+
+        /*
+    Return the index of the successor of the value in the array.
+    If successor does not exists return NOT_FOUND_INDEX
+    */
+        int get(int value);
+};
+

@@ -25,17 +25,21 @@ test_simple_sst: ${SST_DIR}/static_search_trees.h ${SST_DIR}/static_search_trees
 test_built_co_sst: ${SST_DIR}/static_search_trees.h ${SST_DIR}/static_search_trees.cpp ${SST_DIR}/test_built_co_sst.cpp
 	g++ ${CXXFLAGS} ${SST_DIR}/static_search_trees.cpp ${SST_DIR}/test_built_co_sst.cpp -o ./test_built_co_sst
 
-test_sst: test_co_sst test_simple_sst test_ca_sst test_built_co_sst
+test_map_rep_sst: ${SST_DIR}/static_search_trees.h ${SST_DIR}/static_search_trees.cpp ${SST_DIR}/test_map_rep_sst.cpp
+	g++ ${CXXFLAGS} ${SST_DIR}/static_search_trees.cpp ${SST_DIR}/test_map_rep_sst.cpp -o ./test_map_rep_sst
 
-perf_sst: ${SST_DIR}/static_search_trees.h ${SST_DIR}/perf_params.h ${SST_DIR}/static_search_trees.cpp ${SST_DIR}/perf_simple_sst.cpp ${SST_DIR}/perf_co_sst.cpp ${SST_DIR}/perf_ca_sst.cpp ${SST_DIR}/perf_built_co_sst.cpp 
+test_sst: test_co_sst test_simple_sst test_ca_sst test_built_co_sst test_map_rep_sst
+
+perf_sst: ${SST_DIR}/static_search_trees.h ${SST_DIR}/perf_params.h ${SST_DIR}/static_search_trees.cpp ${SST_DIR}/perf_simple_sst.cpp ${SST_DIR}/perf_co_sst.cpp ${SST_DIR}/perf_ca_sst.cpp ${SST_DIR}/perf_built_co_sst.cpp ${SST_DIR}/perf_map_rep_sst.cpp 
 	g++ ${CXXFLAGS} ${SST_DIR}/static_search_trees.cpp ${SST_DIR}/perf_simple_sst.cpp -o perf_simple_sst
 	g++ ${CXXFLAGS} ${SST_DIR}/static_search_trees.cpp ${SST_DIR}/perf_co_sst.cpp -o perf_co_sst
 	g++ ${CXXFLAGS} ${SST_DIR}/static_search_trees.cpp ${SST_DIR}/perf_ca_sst.cpp -o perf_ca_sst
 	g++ ${CXXFLAGS} ${SST_DIR}/static_search_trees.cpp ${SST_DIR}/perf_built_co_sst.cpp -o perf_built_co_sst
+	g++ ${CXXFLAGS} ${SST_DIR}/static_search_trees.cpp ${SST_DIR}/perf_map_rep_sst.cpp -o perf_map_rep_sst
 
 clean_sst:
-	rm -f test_co_sst test_ca_sst test_built_co_sst test_simple_sst test_built_co_sst
-	rm -f perf_sst perf_simple_sst perf_co_sst perf_ca_sst perf_built_co_sst
+	rm -f test_co_sst test_ca_sst test_built_co_sst test_simple_sst test_built_co_sst test_map_rep_sst
+	rm -f perf_sst perf_simple_sst perf_co_sst perf_ca_sst perf_built_co_sst perf_map_rep_sst
 
 
 

@@ -7,8 +7,8 @@
 
 using namespace std;
 
-void test(int n, int Q, bool recursive) {
-    simple_static_search_tree tree(n, recursive);
+void test(int n, int Q) {
+    map_rep_static_search_tree tree;
 
     for (int i = 0; i < n; ++i) {
         tree.update(i, i);
@@ -16,7 +16,7 @@ void test(int n, int Q, bool recursive) {
 
     for (int query = 0; query < Q; ++query)
     {
-        int type = rand() % 2;
+        int type = 0;
         int index = rand() % n;
         if(type == 0) {
             tree.update(index, index);
@@ -30,24 +30,14 @@ void test(int n, int Q, bool recursive) {
     cout << "test(" << n << ", " << Q << "): OK" << endl;
 }
 
-void run(bool recursive) {
+int main(){
+    srand(10);
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    
-    if(recursive) {
-        cout << "Recursive Implementation:\n";
-    } else{
-        cout << "Iterative Implementation:\n";
-    }
     for (int run = 0; run < num_runs; ++run)
     {
         cout << "Run " << run << ": ";
-        test(n, Q, recursive);
+        test(n, Q);
     }
     chrono::steady_clock::time_point end = chrono::steady_clock::now();
     cout << "Time difference = " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
-}
-
-int main(){
-    srand(10);
-    run(sst_recursive_falg);
 }
