@@ -1,4 +1,4 @@
-#include "dynamic_search_tree.h"
+#include "co_dynamic_search_tree.h"
 #include <random>
 
 void test(int max_value) {
