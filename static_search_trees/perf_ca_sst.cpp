@@ -36,6 +36,8 @@ int main(){
     for (int run = 0; run < num_runs; ++run)
     {
         cout << "Run " << run << ": ";
+        int n, Q;
+        cin >> n >> Q;
         test(n, Q);
     }
     chrono::steady_clock::time_point end = chrono::steady_clock::now();

@@ -1,8 +1,7 @@
 #include "co_dynamic_search_tree.h"
 #include <random>
 
-void test(int max_value) {
-    int Q = max_value * 2;
+void test(int max_value, int Q) {
     co_dynamic_serach_tree tree;
     for (int i = 0; i <= max_value; i++){
         tree.add(i * 7);
@@ -13,7 +12,7 @@ void test(int max_value) {
         if (query_type < 4)
         {
             int value = rand() % max_value;
-            // tree.add(value * 7);
+            tree.add(value * 7);
         } else {
             int value = rand() % (max_value * 7);
             int result = tree.get_successor(value);
@@ -29,5 +28,7 @@ void test(int max_value) {
 }
 
 int main() {
-    test(1e6);
+    int n, Q;
+    std::cin >> n >> Q;
+    test(n, Q);
 }

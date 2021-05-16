@@ -1,8 +1,8 @@
 #include <set>
 #include <random>
+#include <iostream>
 
-void test(int max_value) {
-    int Q = max_value * 2;
+void test(int max_value, int Q) {
     std::set<int> tree;
     for (int i = 0; i <= max_value; i++){
         tree.insert(i * 7);
@@ -29,5 +29,7 @@ void test(int max_value) {
 }
 
 int main() {
-    test(1e6);
+    int n, Q;
+    std::cin >> n >> Q;
+    test(n, Q);
 }

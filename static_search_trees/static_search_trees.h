@@ -266,7 +266,7 @@ class CA_static_search_tree {
         *        a max function.
         *
         * @param value1: left child value.
-        * @param value1: right child value.
+        * @param value2: right child value.
         *
         * @return max of the two values.
         */
