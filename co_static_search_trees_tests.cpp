@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
-#include "static-search-trees.h"
+#include "static_search_trees.h"
 // #include <time.h>
 #include <chrono>
 
@@ -17,7 +17,7 @@ void print_array(int *a, int n) {
 void test_get_update_1() {
     // Test with a tree of size 15.
     int n = 15;
-    CO_static_search_tree tree(n);
+    co_static_search_tree tree(n);
     int a[15];
     a[0] = rand() % 10;
     for (int i = 1; i < n; ++i) {
@@ -67,7 +67,7 @@ void test_get_update_1() {
 
 void test_get_update_2() {
     // Test edge case with a tree of size 1.
-    CO_static_search_tree tree(1);
+    co_static_search_tree tree(1);
     tree.update(0, 2);
     if (tree.get(2) != 0) {
         cout << "test_get_update_2 failed: expected 2 at index 0." << endl;
@@ -94,7 +94,7 @@ void test_get_update_3() {
         // limit size to the range [0...10000]
         // no point in doing more.
         int t_size = 1 + rand() % 10000;
-        CO_static_search_tree tree(t_size);
+        co_static_search_tree tree(t_size);
         for (int j = 0; j < t_size; j++) {
             tree.update(j, j);
         }
@@ -118,7 +118,7 @@ void test_get_update_4() {
         // limit size to the range [0...10000]
         // no point in doing more.
         int t_size = 1 + rand() % 10000;
-        CO_static_search_tree tree(t_size);
+        co_static_search_tree tree(t_size);
         for (int j = 0; j < t_size; j++) {
             tree.update(j, j);
         }
@@ -147,7 +147,7 @@ void test_get_update_5() {
         // limit size to the range [0...10000]
         // no point in doing more.
         int t_size = 5000000;
-        CO_static_search_tree tree(t_size);
+        co_static_search_tree tree(t_size);
         for (int j = 0; j < t_size; j++) {
             tree.update(j, j);
         }
@@ -177,7 +177,7 @@ void test_get_update_5() {
 
 void test_range_update_small() {
     const int n = 8;
-    CO_static_search_tree tree(n);
+    co_static_search_tree tree(n);
     int arr[] = {0, 1, 2, 3, 4, 5, 6, 7};
     tree.range_update(0, n - 1, arr);
     cout << "First Update" << endl;
@@ -247,7 +247,7 @@ void test_range_update_small() {
 }
 
 void test_range_update_uniform(const int n) {
-    CO_static_search_tree tree(n);
+    co_static_search_tree tree(n);
     int arr[n];
     for (int i = 0; i < n; ++i) {
         arr[i] = i * 5;

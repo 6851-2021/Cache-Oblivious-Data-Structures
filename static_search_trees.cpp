@@ -1,4 +1,4 @@
-#include "static-search-trees.h"
+#include "static_search_trees.h"
 
 #include<iostream>
 #include<math.h>
@@ -16,61 +16,58 @@ inline int next_power_of_2(unsigned int n) {
     return n; 
 }
 
-const int bottom_tree_h_memo[] = {0,1,1,2,2,4,4,4,4,8,8,8,8,8,8,8,8,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32};
+//memo of the next power of 2 for each possible height
+const int bottom_tree_height_memo[] = {0,1,1,2,2,4,4,4,4,8,8,8,8,8,8,8,8,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32};
 
-inline int CO_static_search_tree::merge(int value1, int value2) {
-    return max(value1, value2);
-}
-
-CO_static_search_tree::CO_static_search_tree(int n) {
+co_static_search_tree::co_static_search_tree(int n) {
     this->n = n;
     this->length = next_power_of_2(n);
     this->size = this->length * 2;
     this->height = log2(this->length) + 1;
     this->tree = (int *)malloc(sizeof(int) * this->size);
     for (int i = 0; i < this->size; ++i) {
-        this->tree[i] = -1;
+        this->tree[i] = MINUS_INFINITY;
     }
     this->array = (int *)malloc(sizeof(int) * this->n);
 }
 
-CO_static_search_tree::~CO_static_search_tree() {
+co_static_search_tree::~co_static_search_tree() {
     free(this->tree);
     free(this->array);
 }
 
-inline int CO_static_search_tree::update_3_base_case(int tree_l, int h, int arr_l, int og_height, int index, int value) {
+inline int co_static_search_tree::update_3_base_case(int block_index, int range_left, int og_height, int index, int value) {
     /*
                             0
                     1               4
                 2       3       5       6
     */
     int leafs_og_height = og_height - 2;
-    int leaf_index = (index - arr_l) >> (leafs_og_height - 1);
+    int leaf_index = (index - range_left) >> (leafs_og_height - 1);
     if(leaf_index == 0) {
-        this->tree[tree_l + 2] = value;
-        this->tree[tree_l + 1] = max(this->tree[tree_l + 2], this->tree[tree_l + 3]);
-        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 4]);
+        this->tree[block_index + 2] = value;
+        this->tree[block_index + 1] = max(this->tree[block_index + 2], this->tree[block_index + 3]);
+        this->tree[block_index + 0] = max(this->tree[block_index + 1], this->tree[block_index + 4]);
     }
     else if(leaf_index == 1) {
-        this->tree[tree_l + 3] = value;
-        this->tree[tree_l + 1] = max(this->tree[tree_l + 2], this->tree[tree_l + 3]);
-        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 4]);
+        this->tree[block_index + 3] = value;
+        this->tree[block_index + 1] = max(this->tree[block_index + 2], this->tree[block_index + 3]);
+        this->tree[block_index + 0] = max(this->tree[block_index + 1], this->tree[block_index + 4]);
     }
     else if(leaf_index == 2) {
-        this->tree[tree_l + 5] = value;
-        this->tree[tree_l + 4] = max(this->tree[tree_l + 5], this->tree[tree_l + 6]);
-        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 4]);
+        this->tree[block_index + 5] = value;
+        this->tree[block_index + 4] = max(this->tree[block_index + 5], this->tree[block_index + 6]);
+        this->tree[block_index + 0] = max(this->tree[block_index + 1], this->tree[block_index + 4]);
     }
     else if(leaf_index == 3) {
-        this->tree[tree_l + 6] = value;
-        this->tree[tree_l + 4] = max(this->tree[tree_l + 5], this->tree[tree_l + 6]);
-        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 4]);
+        this->tree[block_index + 6] = value;
+        this->tree[block_index + 4] = max(this->tree[block_index + 5], this->tree[block_index + 6]);
+        this->tree[block_index + 0] = max(this->tree[block_index + 1], this->tree[block_index + 4]);
     }
-    return this->tree[tree_l];
+    return this->tree[block_index];
 }
 
-inline int CO_static_search_tree::update_4_base_case(int tree_l, int h, int arr_l, int og_height, int index, int value) {
+inline int co_static_search_tree::update_4_base_case(int block_index, int range_left, int og_height, int index, int value) {
     /*
                                     0
                     1                                   2
@@ -78,125 +75,120 @@ inline int CO_static_search_tree::update_4_base_case(int tree_l, int h, int arr_
         4       5       7       8           10       11      13          14                    
     */
     int leafs_og_height = og_height - 3;
-    int leaf_index = (index - arr_l) >> (leafs_og_height - 1);
+    int leaf_index = (index - range_left) >> (leafs_og_height - 1);
     if(leaf_index == 0) {
-        this->tree[tree_l + 4] = value;
-        this->tree[tree_l + 3] = max(this->tree[tree_l + 4], this->tree[tree_l + 5]);
-        this->tree[tree_l + 1] = max(this->tree[tree_l + 3], this->tree[tree_l + 6]);
-        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+        this->tree[block_index + 4] = value;
+        this->tree[block_index + 3] = max(this->tree[block_index + 4], this->tree[block_index + 5]);
+        this->tree[block_index + 1] = max(this->tree[block_index + 3], this->tree[block_index + 6]);
+        this->tree[block_index + 0] = max(this->tree[block_index + 1], this->tree[block_index + 2]);
     }
     else if(leaf_index == 1) {
-        this->tree[tree_l + 5] = value;
-        this->tree[tree_l + 3] = max(this->tree[tree_l + 4], this->tree[tree_l + 5]);
-        this->tree[tree_l + 1] = max(this->tree[tree_l + 3], this->tree[tree_l + 6]);
-        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+        this->tree[block_index + 5] = value;
+        this->tree[block_index + 3] = max(this->tree[block_index + 4], this->tree[block_index + 5]);
+        this->tree[block_index + 1] = max(this->tree[block_index + 3], this->tree[block_index + 6]);
+        this->tree[block_index + 0] = max(this->tree[block_index + 1], this->tree[block_index + 2]);
     }
     else if(leaf_index == 2) {
-        this->tree[tree_l + 7] = value;
-        this->tree[tree_l + 6] = max(this->tree[tree_l + 7], this->tree[tree_l + 8]);
-        this->tree[tree_l + 1] = max(this->tree[tree_l + 3], this->tree[tree_l + 6]);
-        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+        this->tree[block_index + 7] = value;
+        this->tree[block_index + 6] = max(this->tree[block_index + 7], this->tree[block_index + 8]);
+        this->tree[block_index + 1] = max(this->tree[block_index + 3], this->tree[block_index + 6]);
+        this->tree[block_index + 0] = max(this->tree[block_index + 1], this->tree[block_index + 2]);
     }
     else if(leaf_index == 3) {
-        this->tree[tree_l + 8] = value;
-        this->tree[tree_l + 6] = max(this->tree[tree_l + 7], this->tree[tree_l + 8]);
-        this->tree[tree_l + 1] = max(this->tree[tree_l + 3], this->tree[tree_l + 6]);
-        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+        this->tree[block_index + 8] = value;
+        this->tree[block_index + 6] = max(this->tree[block_index + 7], this->tree[block_index + 8]);
+        this->tree[block_index + 1] = max(this->tree[block_index + 3], this->tree[block_index + 6]);
+        this->tree[block_index + 0] = max(this->tree[block_index + 1], this->tree[block_index + 2]);
     }
     else if(leaf_index == 4) {
-        this->tree[tree_l + 10] = value;
-        this->tree[tree_l + 9] = max(this->tree[tree_l + 10], this->tree[tree_l + 11]);
-        this->tree[tree_l + 2] = max(this->tree[tree_l + 9], this->tree[tree_l + 12]);
-        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+        this->tree[block_index + 10] = value;
+        this->tree[block_index + 9] = max(this->tree[block_index + 10], this->tree[block_index + 11]);
+        this->tree[block_index + 2] = max(this->tree[block_index + 9], this->tree[block_index + 12]);
+        this->tree[block_index + 0] = max(this->tree[block_index + 1], this->tree[block_index + 2]);
     }
     else if(leaf_index == 5){
-        this->tree[tree_l + 11] = value;
-        this->tree[tree_l + 9] = max(this->tree[tree_l + 10], this->tree[tree_l + 11]);
-        this->tree[tree_l + 2] = max(this->tree[tree_l + 9], this->tree[tree_l + 12]);
-        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+        this->tree[block_index + 11] = value;
+        this->tree[block_index + 9] = max(this->tree[block_index + 10], this->tree[block_index + 11]);
+        this->tree[block_index + 2] = max(this->tree[block_index + 9], this->tree[block_index + 12]);
+        this->tree[block_index + 0] = max(this->tree[block_index + 1], this->tree[block_index + 2]);
     }
     else if(leaf_index == 6){
-        this->tree[tree_l + 13] = value;
-        this->tree[tree_l + 12] = max(this->tree[tree_l + 13], this->tree[tree_l + 14]);
-        this->tree[tree_l + 2] = max(this->tree[tree_l + 9], this->tree[tree_l + 12]);
-        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+        this->tree[block_index + 13] = value;
+        this->tree[block_index + 12] = max(this->tree[block_index + 13], this->tree[block_index + 14]);
+        this->tree[block_index + 2] = max(this->tree[block_index + 9], this->tree[block_index + 12]);
+        this->tree[block_index + 0] = max(this->tree[block_index + 1], this->tree[block_index + 2]);
     }
     else if(leaf_index == 7){
-        this->tree[tree_l + 14] = value;
-        this->tree[tree_l + 12] = max(this->tree[tree_l + 13], this->tree[tree_l + 14]);
-        this->tree[tree_l + 2] = max(this->tree[tree_l + 9], this->tree[tree_l + 12]);
-        this->tree[tree_l + 0] = max(this->tree[tree_l + 1], this->tree[tree_l + 2]);
+        this->tree[block_index + 14] = value;
+        this->tree[block_index + 12] = max(this->tree[block_index + 13], this->tree[block_index + 14]);
+        this->tree[block_index + 2] = max(this->tree[block_index + 9], this->tree[block_index + 12]);
+        this->tree[block_index + 0] = max(this->tree[block_index + 1], this->tree[block_index + 2]);
     }
-    return this->tree[tree_l];
+    return this->tree[block_index];
 }
 
-int CO_static_search_tree::update(int tree_l, int h, int arr_l, int og_height, int index, int value) {
-    if (h == 1)
+int co_static_search_tree::update(int block_index, int height, int range_left, int og_height, int index, int value) {
+    if (height == 1)
     {
-        this->tree[tree_l] = value;
+        this->tree[block_index] = value;
         return value;
     }
-    if(h == 2) {
-        if(index < arr_l + (1 << (og_height - 2))) {
-            this->tree[tree_l + 1] = value;
+    if(height == 2) {
+        if(index < range_left + (1 << (og_height - 2))) {
+            this->tree[block_index + 1] = value;
         } else {
-            this->tree[tree_l + 2] = value;
+            this->tree[block_index + 2] = value;
         }
         //merge
-        this->tree[tree_l] = this->merge(this->tree[tree_l + 1], this->tree[tree_l + 2]);
-        return this->tree[tree_l];
+        this->tree[block_index] = max(this->tree[block_index + 1], this->tree[block_index + 2]);
+        return this->tree[block_index];
     }
-    if(h == 3) {
-        return this->update_3_base_case(tree_l, h, arr_l, og_height, index, value);
+    if(height == 3) {
+        return this->update_3_base_case(block_index, range_left, og_height, index, value);
     }   
-    if(h == 4) {
-        return this->update_4_base_case(tree_l, h, arr_l, og_height, index, value);
+    if(height == 4) {
+        return this->update_4_base_case(block_index, range_left, og_height, index, value);
     }
     
-    // if((h & (h - 1)) == 0) {
-    //     return this->update_tree_height_pwr_2(tree_l, h, arr_l, og_height, index, value);
-    // }
     //update bottom tree
-    int bottom_tree_h = bottom_tree_h_memo[h];
-    // int bottom_tree_h = next_power_of_2((int)ceil(h / 2));
+    int bottom_tree_height = bottom_tree_height_memo[height];
 
-    int top_tree_h = h - bottom_tree_h;
+    int top_tree_height = height - bottom_tree_height;
     
-    int top_tree_size = (1 << top_tree_h) - 1;
+    int top_tree_size = (1 << top_tree_height) - 1;
 
-    int bottom_tree_og_height = og_height - top_tree_h;
-    int bottom_tree_index = (index - arr_l) >> (bottom_tree_og_height - 1);
-    int bottom_tree_size = (1 << bottom_tree_h) - 1;
+    int bottom_tree_og_height = og_height - top_tree_height;
+    int bottom_tree_index = (index - range_left) >> (bottom_tree_og_height - 1);
+    int bottom_tree_size = (1 << bottom_tree_height) - 1;
 
-    int bottom_tree_tree_l = tree_l + top_tree_size + (bottom_tree_index << bottom_tree_h) - bottom_tree_index;
-    int bottom_tree_arr_l = arr_l + (bottom_tree_index << (bottom_tree_og_height - 1));
+    int bottom_tree_block_index = block_index + top_tree_size + (bottom_tree_index << bottom_tree_height) - bottom_tree_index;
+    int bottom_tree_range_left = range_left + (bottom_tree_index << (bottom_tree_og_height - 1));
 
-    // int child_value = this->update_tree_height_pwr_2(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, index, value);
-    int child_value = this->update(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, index, value);
+    int child_value = this->update(bottom_tree_block_index, bottom_tree_height, bottom_tree_range_left, bottom_tree_og_height, index, value);
 
 
     //get adjacent child
     int adjacent_child_value;
     if(bottom_tree_index % 2 == 0) {
-        adjacent_child_value = this->tree[bottom_tree_tree_l + bottom_tree_size];
+        adjacent_child_value = this->tree[bottom_tree_block_index + bottom_tree_size];
     } else {
-        adjacent_child_value = this->tree[bottom_tree_tree_l - bottom_tree_size];
+        adjacent_child_value = this->tree[bottom_tree_block_index - bottom_tree_size];
     }
 
     //merge two children value
-    int merged_value = this->merge(child_value, adjacent_child_value);
+    int merged_value = max(child_value, adjacent_child_value);
 
     //update upper tree
-    int final_value = this->update(tree_l, top_tree_h, arr_l, og_height, index, merged_value);
+    int final_value = this->update(block_index, top_tree_height, range_left, og_height, index, merged_value);
 
     return final_value;
 }
 
-void CO_static_search_tree::update(int index, int value) {
+void co_static_search_tree::update(int index, int value) {
     this->update(0, this->height, 0, this->height, index, value);
 }
 
-inline int CO_static_search_tree::get_3_base_case(int tree_l, int h, int arr_l, int og_height, int value) {
+inline int co_static_search_tree::get_3_base_case(int block_index, int range_left, int og_height, int value) {
     /*
                             0
                     1               4
@@ -205,20 +197,20 @@ inline int CO_static_search_tree::get_3_base_case(int tree_l, int h, int arr_l, 
 
     int leafs_og_height = og_height - 2;
     int leafs_range_length = (1 << (leafs_og_height - 1));
-    if(value <= this->tree[tree_l + 1]){
-        if (value <= this->tree[tree_l + 2])
-            return arr_l;
+    if(value <= this->tree[block_index + 1]){
+        if (value <= this->tree[block_index + 2])
+            return range_left;
         else    
-            return arr_l + leafs_range_length;
+            return range_left + leafs_range_length;
     } else {
-        if(value <= this->tree[tree_l + 5])
-            return arr_l + leafs_range_length << 1;
+        if(value <= this->tree[block_index + 5])
+            return range_left + leafs_range_length << 1;
         else
-            return arr_l + (leafs_range_length << 1) + leafs_range_length; 
+            return range_left + (leafs_range_length << 1) + leafs_range_length; 
     }
 }
 
-inline int CO_static_search_tree::get_4_base_case(int tree_l, int h, int arr_l, int og_height, int value) {
+inline int co_static_search_tree::get_4_base_case(int block_index, int range_left, int og_height, int value) {
     /*
                                     0
                     1                                   2
@@ -227,138 +219,133 @@ inline int CO_static_search_tree::get_4_base_case(int tree_l, int h, int arr_l, 
     */
     int leafs_og_height = og_height - 3;
     int leafs_range_length = (1 << (leafs_og_height - 1));
-    if(value <= this->tree[tree_l + 1]) {
-        if(value <= this->tree[tree_l + 3]) {
-            if(value <= this->tree[tree_l + 4])
-                return arr_l;
-            return arr_l + leafs_range_length;
+    if(value <= this->tree[block_index + 1]) {
+        if(value <= this->tree[block_index + 3]) {
+            if(value <= this->tree[block_index + 4])
+                return range_left;
+            return range_left + leafs_range_length;
         }
         else
         { //6
-            if(value <= this->tree[tree_l + 7])
-                return arr_l + (leafs_range_length << 1);
-            return arr_l + (leafs_range_length << 1) + leafs_range_length;
+            if(value <= this->tree[block_index + 7])
+                return range_left + (leafs_range_length << 1);
+            return range_left + (leafs_range_length << 1) + leafs_range_length;
         }
     } else //2
     {
-        if(value <= this->tree[tree_l + 9]) {
-            if(value <= this->tree[tree_l + 10]) return  arr_l + (leafs_range_length << 2);
-            return arr_l + (leafs_range_length << 2) + leafs_range_length;
+        if(value <= this->tree[block_index + 9]) {
+            if(value <= this->tree[block_index + 10]) return  range_left + (leafs_range_length << 2);
+            return range_left + (leafs_range_length << 2) + leafs_range_length;
         }
         else //12 
         {
-            if(value <= this->tree[tree_l + 13])
-                return arr_l + (leafs_range_length << 2) + (leafs_range_length << 1);
-            return arr_l + (leafs_range_length << 2) + (leafs_range_length << 1) + leafs_range_length;
+            if(value <= this->tree[block_index + 13])
+                return range_left + (leafs_range_length << 2) + (leafs_range_length << 1);
+            return range_left + (leafs_range_length << 2) + (leafs_range_length << 1) + leafs_range_length;
         }
     }
 }
 
-int CO_static_search_tree::get(int tree_l, int h, int arr_l, int og_height, int value) {
-    if (h == 1)
+int co_static_search_tree::get(int block_index, int height, int range_left, int og_height, int value) {
+    if (height == 1)
     {
-        return arr_l;
+        return range_left;
     }
-    if(h == 2) {
-        if(value <= this->tree[tree_l + 1])
-            return arr_l;
-        return arr_l + (1 << (og_height - 2));
+    if(height == 2) {
+        if(value <= this->tree[block_index + 1])
+            return range_left;
+        return range_left + (1 << (og_height - 2));
     }
-    if(h == 3){
-        return this->get_3_base_case(tree_l, h, arr_l, og_height, value);
+    if(height == 3){
+        return this->get_3_base_case(block_index, range_left, og_height, value);
     }
-    if(h == 4) {
-        return this->get_4_base_case(tree_l, h, arr_l, og_height, value);
+    if(height == 4) {
+        return this->get_4_base_case(block_index, range_left, og_height, value);
     }
 
-    // if((h & (h - 1)) == 0) {
-    //     return this->get_tree_height_pwr_2(tree_l, h, arr_l, og_height, value);
-    // }
-    int bottom_tree_h = bottom_tree_h_memo[h];
-    int top_tree_h = h - bottom_tree_h;
-
-    int index = this->get(tree_l, top_tree_h, arr_l, og_height, value);
     
-    int top_tree_size = (1 << top_tree_h) - 1;
+    int bottom_tree_height = bottom_tree_height_memo[height];
+    int top_tree_height = height - bottom_tree_height;
 
-    int bottom_tree_og_height = og_height - top_tree_h;
-    int bottom_tree_index = (index - arr_l) >> (bottom_tree_og_height - 1);
-    int bottom_tree_size = (1 << bottom_tree_h) - 1;
+    int index = this->get(block_index, top_tree_height, range_left, og_height, value);
+    
+    int top_tree_size = (1 << top_tree_height) - 1;
 
-    int bottom_tree_tree_l = tree_l + top_tree_size + (bottom_tree_index << bottom_tree_h) - bottom_tree_index;
-    int bottom_tree_arr_l = arr_l + (bottom_tree_index << (bottom_tree_og_height - 1));
+    int bottom_tree_og_height = og_height - top_tree_height;
+    int bottom_tree_index = (index - range_left) >> (bottom_tree_og_height - 1);
+    int bottom_tree_size = (1 << bottom_tree_height) - 1;
 
-    if (value <= tree[bottom_tree_tree_l])
-    {
-        // return this->get_tree_height_pwr_2(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, value);
-        return this->get(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, value);
+    int bottom_tree_block_index = block_index + top_tree_size + (bottom_tree_index << bottom_tree_height) - bottom_tree_index;
+    int bottom_tree_range_left = range_left + (bottom_tree_index << (bottom_tree_og_height - 1));
+
+    if (value <= tree[bottom_tree_block_index]){
+        return this->get(bottom_tree_block_index, bottom_tree_height, bottom_tree_range_left, bottom_tree_og_height, value);
     }
     else{
         bottom_tree_index += 1;
-        bottom_tree_tree_l += bottom_tree_size;
-        bottom_tree_arr_l += (1 << (bottom_tree_og_height - 1));
-        // return this->get_tree_height_pwr_2(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, value);
-        return this->get(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, value);
+        bottom_tree_block_index += bottom_tree_size;
+        bottom_tree_range_left += (1 << (bottom_tree_og_height - 1));
+        return this->get(bottom_tree_block_index, bottom_tree_height, bottom_tree_range_left, bottom_tree_og_height, value);
     }
 }
 
-int CO_static_search_tree::get(int value) {
+int co_static_search_tree::get(int value) {
     if(value > this->tree[0]) {
-        return -1;
+        return NOT_FOUND_INDEX;
     }
     int result = this->get(0, this->height, 0, this->height, value);
     return result;
 }
 
-void CO_static_search_tree::range_update(int tree_l, int h, int arr_l,  int og_height, int range_left, int range_right, int* items) {
-    if (h == 1)
+void co_static_search_tree::range_update(int block_index, int height, int range_left,  int og_height, int query_range_left, int query_range_right, int* items) {
+    if (height == 1)
     {
 
-        this->tree[tree_l] = items[arr_l];
+        this->tree[block_index] = items[range_left];
         return;
     }
 
     //update bottom tree
-    int bottom_tree_h = bottom_tree_h_memo[h];
+    int bottom_tree_height = bottom_tree_height_memo[height];
 
-    int top_tree_h = h - bottom_tree_h;
+    int top_tree_height = height - bottom_tree_height;
     
-    int top_tree_size = (1 << top_tree_h) - 1;
+    int top_tree_size = (1 << top_tree_height) - 1;
 
-    int bottom_tree_og_height = og_height - top_tree_h;
-    int bottom_tree_size = (1 << bottom_tree_h) - 1;
+    int bottom_tree_og_height = og_height - top_tree_height;
+    int bottom_tree_size = (1 << bottom_tree_height) - 1;
 
-    int bottom_tree_index_range_left = (range_left - arr_l) >> (bottom_tree_og_height - 1);
-    int bottom_tree_index_range_right = (range_right - arr_l) >> (bottom_tree_og_height - 1);
+    int bottom_tree_index_range_left = (query_range_left - range_left) >> (bottom_tree_og_height - 1);
+    int bottom_tree_index_range_right = (query_range_right - range_left) >> (bottom_tree_og_height - 1);
 
     for (int bottom_tree_index = bottom_tree_index_range_left; bottom_tree_index <= bottom_tree_index_range_right; ++bottom_tree_index) {
-        int bottom_tree_tree_l = tree_l + top_tree_size + (bottom_tree_index << bottom_tree_h) - bottom_tree_index;
-        int bottom_tree_arr_l = arr_l + (bottom_tree_index << (bottom_tree_og_height - 1));
-        this->range_update(bottom_tree_tree_l, bottom_tree_h, bottom_tree_arr_l, bottom_tree_og_height, max(range_left, bottom_tree_arr_l), min(range_right, bottom_tree_arr_l + (1 << (bottom_tree_og_height - 1)) - 1), items);
+        int bottom_tree_block_index = block_index + top_tree_size + (bottom_tree_index << bottom_tree_height) - bottom_tree_index;
+        int bottom_tree_range_left = range_left + (bottom_tree_index << (bottom_tree_og_height - 1));
+        this->range_update(bottom_tree_block_index, bottom_tree_height, bottom_tree_range_left, bottom_tree_og_height, max(query_range_left, bottom_tree_range_left), min(query_range_right, bottom_tree_range_left + (1 << (bottom_tree_og_height - 1)) - 1), items);
     }
 
     bottom_tree_index_range_left = bottom_tree_index_range_left & (~1);
     int range_lenght = (1 << (bottom_tree_og_height - 1));
     for (int bottom_tree_index = bottom_tree_index_range_left; bottom_tree_index <= bottom_tree_index_range_right; bottom_tree_index += 2)
     {
-        int bottom_tree_tree_l = tree_l + top_tree_size + (bottom_tree_index << bottom_tree_h) - bottom_tree_index;
-        int bottom_tree_arr_l = arr_l + (bottom_tree_index << (bottom_tree_og_height - 1));
-        items[bottom_tree_arr_l] = max(this->tree[bottom_tree_tree_l], this->tree[bottom_tree_tree_l + bottom_tree_size]);
+        int bottom_tree_block_index = block_index + top_tree_size + (bottom_tree_index << bottom_tree_height) - bottom_tree_index;
+        int bottom_tree_range_left = range_left + (bottom_tree_index << (bottom_tree_og_height - 1));
+        items[bottom_tree_range_left] = max(this->tree[bottom_tree_block_index], this->tree[bottom_tree_block_index + bottom_tree_size]);
     }
 
     //update upper tree
-    this->range_update(tree_l, top_tree_h, arr_l, og_height, range_left, range_right, items);
+    this->range_update(block_index, top_tree_height, range_left, og_height, query_range_left, query_range_right, items);
 }
 
-void CO_static_search_tree::range_update(int l, int r, int *items) {
+void co_static_search_tree::range_update(int query_range_left, int query_range_right, int *items) {
     
-    for (int i = l; i <= r; ++i) {
+    for (int i = query_range_left; i <= query_range_right; ++i) {
         this->array[i] = items[i];
     }
-    this->range_update(0, this->height, 0, this->height, l, r, this->array);
+    this->range_update(0, this->height, 0, this->height, query_range_left, query_range_right, this->array);
 }
 
-inline int CO_static_search_tree::left_child(int block_index, int depth, int path) {
+inline int co_static_search_tree::left_child(int block_index, int depth, int path) {
     if (depth & 1){
         return block_index + 1;
     }
@@ -369,7 +356,7 @@ inline int CO_static_search_tree::left_child(int block_index, int depth, int pat
     return left_child_block_index;
 }
 
-inline int CO_static_search_tree::right_child(int block_index, int depth, int path) {
+inline int co_static_search_tree::right_child(int block_index, int depth, int path) {
     if (depth & 1){
         return block_index + 2;
     }
@@ -380,15 +367,15 @@ inline int CO_static_search_tree::right_child(int block_index, int depth, int pa
     return right_child_block_index;
 }
 
-int CO_static_search_tree::update_tree_height_pwr_2(int block_index, int h, int arr_l, int og_height, int index, int value) {
+int co_static_search_tree::update_tree_height_pwr_2(int block_index, int height, int range_left, int og_height, int index, int value) {
     int inner_block_index = 0;
     int depth = 1;
     int path = 0;
     int length = (1 << (og_height - 2));
-    while (depth != h)
+    while (depth != height)
     {
         this->block_index_memo[depth] = inner_block_index;
-        if (index < arr_l + length)
+        if (index < range_left + length)
         {
             inner_block_index = this->left_child(inner_block_index, depth, path);
             path <<= 1;
@@ -396,13 +383,13 @@ int CO_static_search_tree::update_tree_height_pwr_2(int block_index, int h, int 
         else {
             inner_block_index = this->right_child(inner_block_index, depth, path);
             path = (path << 1) | 1;
-            arr_l += length;
+            range_left += length;
         }
         length >>= 1;
         depth += 1;
     }
     this->tree[block_index + inner_block_index] = value;
-    for (int i = h - 1; i >= 1; --i) {
+    for (int i = height - 1; i >= 1; --i) {
         path >>= 1;
         int inner_block_index = this->block_index_memo[i];
         int left_child_inner_block_index = this->left_child(inner_block_index, i, path);
@@ -413,12 +400,12 @@ int CO_static_search_tree::update_tree_height_pwr_2(int block_index, int h, int 
 }
 
 
-int CO_static_search_tree::get_tree_height_pwr_2(int block_index, int h, int arr_l, int og_height, int value) {
+int co_static_search_tree::get_tree_height_pwr_2(int block_index, int height, int range_left, int og_height, int value) {
     int inner_block_index = 0;
     int depth = 1;
     int path = 0;
     int length = (1 << (og_height - 2));
-    while (depth != h)
+    while (depth != height)
     {
         this->block_index_memo[depth] = inner_block_index;
         int left_child_inner_block_index = this->left_child(inner_block_index, depth, path);
@@ -430,19 +417,14 @@ int CO_static_search_tree::get_tree_height_pwr_2(int block_index, int h, int arr
         else {
             inner_block_index = this->right_child(inner_block_index, depth, path);
             path = (path << 1) | 1;
-            arr_l += length;
+            range_left += length;
         }
         length >>= 1;
         depth += 1;
     }
-    return arr_l;
+    return range_left;
 }
 
-void CO_static_search_tree::print() {
-    for (int i = 0; i < this->size; ++i) {
-        printf("Node %d: %d\n", i + 1, this->tree[i]);
-    }
-}
 //-----------------------------------------------------------------------
 
 built_co_static_search_tree::built_co_static_search_tree(int n) {
@@ -468,7 +450,7 @@ void built_co_static_search_tree::van_emde_boas_build(int tree_l, int h, int og_
         return;
     }
 
-    int bottom_tree_h = bottom_tree_h_memo[h];
+    int bottom_tree_h = bottom_tree_height_memo[h];
     int top_tree_h = h - bottom_tree_h;
 
     this->van_emde_boas_build(tree_l, top_tree_h, og_height, bfs_order);

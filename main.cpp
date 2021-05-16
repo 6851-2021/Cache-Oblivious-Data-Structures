@@ -1,4 +1,4 @@
-#include "static-search-trees.h"
+#include "static_search_trees.h"
 #include "matrix_walker.h"
 
 int main() {

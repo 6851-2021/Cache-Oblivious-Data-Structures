@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
-#include "static-search-trees.h"
+#include "static_search_trees.h"
 #include <time.h>
 #include <chrono>
 

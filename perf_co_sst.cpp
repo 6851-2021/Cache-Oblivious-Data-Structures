@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
-#include "static-search-trees.h"
+#include "static_search_trees.h"
 #include "perf_params.h"
 // #include <time.h>
 #include <chrono>
@@ -8,7 +8,7 @@
 using namespace std;
 
 void test(int n, int Q) {
-    CO_static_search_tree tree(n);
+    co_static_search_tree tree(n);
 
     for (int i = 0; i < n; ++i) {
         tree.update(i, i);
