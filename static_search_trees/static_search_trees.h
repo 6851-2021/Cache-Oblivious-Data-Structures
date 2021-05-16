@@ -237,6 +237,7 @@ class built_co_static_search_tree {
         int get(int value);
 };
 
+// Auxiliary struct for stack of nodes along an update path.
 typedef struct Triplet {
     int parent;
     int left;
@@ -247,7 +248,8 @@ typedef struct Triplet {
 // Cache-aware (hopefully optimal) static search tree. This is essentially
 // a static search tree of subtrees, each of height 3 (4 levels or 15 nodes
 // total). Each subtree is stored in an adjacent array slice, so we can index
-// it however we want.
+// it however we want. The subtrees are ordered within the CA_sst in a normal BST
+// order.
 class CA_static_search_tree {
     private:
         int *tree;
@@ -255,35 +257,78 @@ class CA_static_search_tree {
         int length;
         int size;
         int height;
+        // auxiliary array serving as a stack to keep track of parent indices for calls to
+        // update so that we can update the whole path down to the target leaf.
         std::vector<Triplet> parents;
 
+        /**
+        * @brief Merge two children node values into the parent. The merge function itself is
+        *        a max function.
+        *
+        * @param value1: left child value.
+        * @param value1: right child value.
+        *
+        * @return max of the two values.
+        */
         int merge(int value1, int value2);
+        /**
+        * @brief Update the value at index index, which corresponds to the index of some value in the
+        *        tree if it were a sorted array.
+        *
+        * @param tree_1: current real index in the CA tree.
+        * @param num_inner_nodes: number of inner nodes (base case subtrees) we went over so far, with
+        *                         the exception of preceding inner nodes within our current level in the
+        *                         tree.
+        * @param temp_root: current root within the current subunit/subtree (tree of size 15). Values range
+        *                   from 1 to 15.
+        * @param h: current height of the actual node we're at within the CA_tree (not subtree root node).
+        * @param arr_l: left end of the sorted-order range containg value.
+        * @param arr_3: right end of the sorted-order range containg value.
+        * @param index: index of the node to update. Index corresponds to where the node would be in a sorted
+        *               array (in-order traversal array).
+        * @param value: new value to place at index.
+        */
         void update(int tree_l, int num_inner_nodes, int temp_root, int h, int arr_l, int arr_r, int index, int value);
+        /**
+        * @brief return in-order traversal index of value in the tree.
+        *
+        * @param tree_1: current real index in the CA tree.
+        * @param num_inner_nodes: number of inner nodes (base case subtrees) we went over so far, with
+        *                         the exception of preceding inner nodes within our current level in the
+        *                         tree.
+        * @param temp_root: current root within the current subunit/subtree (tree of size 15). Values range
+        *                   from 1 to 15.
+        * @param h: current height of the actual node we're at within the CA_tree (not subtree root node).
+        * @param arr_l: left end of the sorted-order range containg value.
+        * @param arr_3: right end of the sorted-order range containg value.
+        * @param value: new value to place at index.
+        *
+        * @return: in-order traversal (sorted array) index of value.
+        */
         int get(int tree_l, int num_inner_nodes, int temp_root, int h, int arr_l, int arr_r, int value);
-        int calc_real_subtree_root(int root_idx);
     public:
-    ~CA_static_search_tree();
-    /*
+        ~CA_static_search_tree();
+        /*
     Init a cache aware static search tree with size equal to
     the next power of 2 greater than n.
     */
-    CA_static_search_tree(int n);
+        CA_static_search_tree(int n);
 
-    /*
+        /*
     Print the tree defined array values.
     */
-    void print_tree();
+        void print_tree();
 
-    /*
+        /*
     Update the value at the given index.
     */
-    void update(int index, int value);
+        void update(int index, int value);
 
-    /*
+        /*
     Return the index of the successor of the value in the array.
     If successor does not exists return NOT_FOUND_INDEX
     */
-    int get(int value);
+        int get(int value);
 };
 
 class simple_static_search_tree {
