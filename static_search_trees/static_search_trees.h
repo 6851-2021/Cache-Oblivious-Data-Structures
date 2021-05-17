@@ -259,7 +259,7 @@ class CA_static_search_tree {
         int height;
         // auxiliary array serving as a stack to keep track of parent indices for calls to
         // update so that we can update the whole path down to the target leaf.
-        std::vector<Triplet> parents;
+        // std::vector<Triplet> parents;
 
         /**
         * @brief Merge two children node values into the parent. The merge function itself is
