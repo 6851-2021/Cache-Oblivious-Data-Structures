@@ -92,9 +92,12 @@ clean_matrix_walker:
 	rm -f perf_co_matrix_walker perf_naive_matrix_walker
 
 
+IND_GRP_DIR = indirection_group
 
+test_indirection_group: ${IND_GRP_DIR}/indirection_group.h ${IND_GRP_DIR}/indirection_group.cpp ${IND_GRP_DIR}/test_indirection_group.cpp
+	g++ -g -DDEBUG -Og -ggdb -Wno-attributes ${IND_GRP_DIR}/indirection_group.cpp ${IND_GRP_DIR}/test_indirection_group.cpp -o ./test_indirection_group
 
+clean_indirection:
+	rm -f test_indirection_group
 
-
-
-clean: clean_sst clean_matrix_walker clean_dst
+clean: clean_sst clean_matrix_walker clean_dst clean_indirection
