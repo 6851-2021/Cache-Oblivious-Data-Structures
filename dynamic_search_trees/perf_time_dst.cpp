@@ -95,6 +95,8 @@ void test_add_n_rand(int n) {
 	insert_n_std_set(n, std_set);
 	end = chrono::steady_clock::now();
 	cout << "Runtime = " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << "[µs]" << "\n\n";
+
+	cout << "Done." << endl;
 }
 
 // Insert n random elements into each search tree and then do Q successor queries
@@ -124,15 +126,80 @@ void test_add_n_rand_then_query_Q_rand(int n, int Q) {
 	get_successor_Q_std_set(Q, std_set);
 	end = chrono::steady_clock::now();
 	cout << "Runtime = " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << "[µs]" << "\n\n";
+
+	cout << "Done." << endl;
 }
+
+// Test randomly insering or deleting random-valued elements into CO-DST or std::set,
+// for a total of Q operations. Measure the runtime of each data structure accordingly.
+void test_rand_add_and_query(int Q) {
+	co_dynamic_serach_tree dyn_tree;
+	set<int> std_set;
+
+	chrono::steady_clock::time_point begin;
+	chrono::steady_clock::time_point end;
+
+	cout << "Testing " << Q << " randomized insert and lower_bound/get_successor operations:\n\n";
+
+	// dynamic search tree
+	srand(0);
+	cout << "Testing runtime of dynamic cache-oblivious B-trees on " << Q << " random operations." << endl;
+	begin = chrono::steady_clock::now();
+	for (int i = 0; i < 5; i++) {
+		// insert a few random elements first.
+		dyn_tree.add(rand() % RAND_NUM_LIMIT);
+	}
+	for (int i = 0; i < Q; i++) {
+		if ((i + 5) % RAND_SEED_FREQ == 0) {
+			srand(INT_MAX + (i / RAND_SEED_FREQ));
+		}
+		int query_type = rand() & 1;
+		int elem = rand() % RAND_NUM_LIMIT;
+		if (query_type == 0) {
+			// insert
+			dyn_tree.add(elem);
+		} else {
+			temp_successor_value = dyn_tree.get_successor(elem);
+		}
+	}
+	end = chrono::steady_clock::now();
+	cout << "Runtime = " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << "[µs]" << "\n\n";
+
+	// std::set
+	srand(0);
+	cout << "Testing runtime of std::set on " << Q << " randomized operations." << endl;
+	begin = chrono::steady_clock::now();
+	for (int i = 0; i < 5; i++) {
+		// insert a few random elements first.
+		std_set.insert(rand() % RAND_NUM_LIMIT);
+	}
+	for (int i = 0; i < Q; i++) {
+		if ((i + 5) % RAND_SEED_FREQ == 0) {
+			srand(INT_MAX + (i / RAND_SEED_FREQ));
+		}
+		int query_type = rand() & 1;
+		int elem = rand() % RAND_NUM_LIMIT;
+		if (query_type == 0) {
+			// insert
+			std_set.insert(elem);
+		} else {
+			temp_successor_value = *std_set.lower_bound(elem);
+		}
+	}
+	end = chrono::steady_clock::now();
+	cout << "Runtime = " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << "[µs]" << "\n\n";
+
+	cout << "Done." << endl;
+}	
 
 // Make the calls to all the performance tests here.
 void run(int n, int Q) {
 	cout << "Running performance tests on dynamic search trees\n";
 	test_add_n_rand(n);
 	test_add_n_rand_then_query_Q_rand(n, Q);
+	test_rand_add_and_query(Q);
 }
 
 int main(){
-    run((1 << 15), (1 << 15));
+    run((1 << 20), (1 << 24));
 }
