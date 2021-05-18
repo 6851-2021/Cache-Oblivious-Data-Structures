@@ -85,4 +85,19 @@ class indirection_group {
          * @return false  otherwise
          */
         bool overloaded();
+
+        /**
+         * @brief Checks if the group is empty
+         * 
+         * @return true  if the group is empty
+         * @return false  otherwise
+         */
+        bool empty();
+
+        /**
+         * @brief calculates the size of the group
+         * 
+         * @return int  the size of the group
+         */
+        int size();
 };

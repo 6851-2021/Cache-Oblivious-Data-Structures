@@ -5,6 +5,9 @@ using namespace std;
 
 void test_inserts() {
     indirection_group grp(3);
+
+    assert(grp.empty());
+
     assert(grp.insert(3) == false);
     assert(grp.get_max() == 3);
     assert(grp.overloaded() == false);
@@ -16,6 +19,8 @@ void test_inserts() {
     assert(grp.insert(7) == false);
     assert(grp.get_max() == 7);
     assert(grp.overloaded() == false);
+
+    assert(grp.size() == 3);
 
     assert(grp.insert(-1) == true);
     assert(grp.get_max() == 7);

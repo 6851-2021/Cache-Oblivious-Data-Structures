@@ -69,3 +69,11 @@ int indirection_group::get_max() {
 bool indirection_group::overloaded() {
     return this->vec.size() > this->capacity;
 }
+
+bool indirection_group::empty() {
+    return this->vec.empty();
+}
+
+int indirection_group::size() {
+    return this->vec.size();
+}
