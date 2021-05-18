@@ -42,11 +42,6 @@ clean_sst:
 	rm -f perf_sst perf_simple_sst perf_co_sst perf_ca_sst perf_built_co_sst perf_map_rep_sst
 
 
-
-
-
-
-
 DST_DIR = dynamic_search_trees
 OFM_DIR = ordered-file-maintenance-in-c
 
@@ -69,12 +64,10 @@ clean_dst:
 	rm -f perf_co_dst perf_std_set perf_time_dst
 
 
-
-
-
-
-
 MW_DIR = matrix_walker
+
+
+perf_matrix_walker: perf_co_matrix_walker perf_naive_matrix_walker
 
 test_matrix_walker: ${MW_DIR}/matrix_walker.h ${MW_DIR}/matrix_walker.cpp ${MW_DIR}/test_matrix_walker.cpp
 	g++ ${CXXFLAGS} ${MW_DIR}/matrix_walker.cpp ${MW_DIR}/test_matrix_walker.cpp -o test_matrix_walker
@@ -85,7 +78,6 @@ perf_co_matrix_walker: ${MW_DIR}/matrix_walker.h ${MW_DIR}/matrix_walker.cpp ${M
 perf_naive_matrix_walker: ${MW_DIR}/matrix_walker.h ${MW_DIR}/matrix_walker.cpp ${MW_DIR}/perf_matrix_walker.cpp
 	g++ ${CXXFLAGS} ${MW_DIR}/matrix_walker.cpp ${MW_DIR}/perf_matrix_walker.cpp -o perf_naive_matrix_walker
 
-perf_matrix_walker: perf_naive_matrix_walker perf_co_matrix_walker
 
 clean_matrix_walker:
 	rm -f test_matrix_walker 
