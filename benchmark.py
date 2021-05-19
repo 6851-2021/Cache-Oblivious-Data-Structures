@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from perf import PerfObj
 from sys import argv
+import os
 
 def plot_barchart_against(dfs: list, y_axis="L1-dcache-load-misses", test_names=None, save_file="bars.png"):
     df1 = dfs[0][1]
@@ -60,6 +61,7 @@ def plot_lines_against(dfs: list, x_axis="n", y_axis="L1-dcache-load-misses", te
     for i in range(len(dfs)):
         label = ""
         df_name, df = dfs[i]
+        df = df.groupby([x_axis], as_index=False).mean()
         df.plot(x=x_axis, y=y_axis, ax=ax, label=df_name)
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
@@ -70,25 +72,62 @@ def plot_lines_against(dfs: list, x_axis="n", y_axis="L1-dcache-load-misses", te
     fig.savefig(save_file)
 
 def record_program(program_name, log_folder=None):
-    Ns = range(1000, 10000, 1000)
+    Ns = list(range(1000, 20000, 1000))
     Qs = [100000]
     perf = PerfObj()
     for n in Ns:
         for q in Qs:
-            perf.record_cache(program_name, n, q)
+            parsed_data = perf.record_cache(program_name, n, q)
+    if log_folder:
+        perf.get_records().to_pickle(f"{log_folder}/{uuid.uuid4()}.log")
+
     return perf.get_records()
 
-def main(programs_to_record):
+def mkdir(path):
+    try:
+        os.makedirs(path)
+    except FileExistsError:
+        # directory already exists
+        pass
+
+def record(programs_to_record):
     dfs = []
     for program in programs_to_record:
-        df = record_program(program)
+        log_folder = "logs/" + program.replace("./", "")
+        mkdir(log_folder)
+        df = record_program(program, log_folder)
         dfs.append((program, df))
     # plot_barchart_against(dfs, y_axis="L1-dcache-load-misses")
     plot_lines_against(dfs, x_axis="n", y_axis="L1-dcache-load-misses")
+
+
+def get_log_df(path):
+    log_files = [os.path.join(path, f) for f in os.listdir(path) if f.endswith(".log")]
+    ret_df = pd.DataFrame()
+    for log_file in log_files:
+        df = pd.read_pickle(log_file)
+        ret_df = ret_df.append(df, ignore_index=True)
+            
+    return ret_df
+
+def plot(programs):
+    names = [name.replace('./', '') for name in programs]
+    folders = [f"logs/{name}/" for name in names]
+    dfs = []
+    for name, folder in zip(names, folders):
+        df = get_log_df(folder)
+        dfs.append((name, df))
+    plot_lines_against(dfs, x_axis="n", y_axis="L1-dcache-load-misses")
+
 if __name__ == '__main__':
     if len(argv) > 1:
-        main(argv[1:])
+        record(argv[1:])
     else:
-        print("Error :| replace this code or pass arguments")
+        programs = ["./perf_co_sst", "./perf_ca_sst", "./perf_built_co_sst", "./perf_simple_sst", "./perf_map_rep_sst"]
+        # programs = ["./perf_std_set", "./perf_co_dst"]
+        # programs = ["./co_matrix_walker", "./naive_matrix_walker"]
+        # main(programs)
+        # print("Error :| replace this code or pass arguments")
+        plot([i.replace("perf_", "") for i in programs])
 
 

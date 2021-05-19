@@ -18,11 +18,12 @@ class PerfObj:
         for i in range(len(data)):
             if data[i] in self.stat_of_interest:
                 if data[i] == "cpu-clock":
-                    parsed_data[data[i]] = data[i-2]
+                    parsed_data[data[i]] = data[i-2].replace(",", "")
                 else:
                     parsed_data[data[i]] = self.__parse_int(data[i-1])
 
         self.df = self.df.append(parsed_data, ignore_index=True)
+        return parsed_data
 
 
     def __parse_int(self, integer):
@@ -40,7 +41,8 @@ class PerfObj:
         if n and q:
             inputstr = f"{n} {q}\n"
         result = run(command, stdout=PIPE, universal_newlines=True, input=inputstr, stderr=PIPE)
-        self.parse_perf_stat(result.stderr, program_name, n, q)
+        parsed_data = self.parse_perf_stat(result.stderr, program_name, n, q)
+        return parsed_data
 
     # returns a data frame
     def get_records(self):
@@ -48,7 +50,7 @@ class PerfObj:
         self.df["cache-misses"] = self.df["cache-misses"].astype(int)
         self.df["L1-dcache-load-misses"] = self.df["L1-dcache-load-misses"].astype(int)
         self.df["LLC-load-misses"] = self.df["LLC-load-misses"].astype(int)
-        self.df["cpu-clock"] = self.df["cpu-clock"].apply(lambda x: x.replace(",", "")).astype(float)
+        self.df["cpu-clock"] = self.df["cpu-clock"].astype(float)
 
         return self.df
 
