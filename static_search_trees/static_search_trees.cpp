@@ -338,9 +338,15 @@ void co_static_search_tree::range_update(int block_index, int height, int range_
 }
 
 void co_static_search_tree::range_update(int query_range_left, int query_range_right, int *items) {
-    
     for (int i = query_range_left; i <= query_range_right; ++i) {
         this->array[i] = items[i];
+    }
+    this->range_update(0, this->height, 0, this->height, query_range_left, query_range_right, this->array);
+}
+
+void co_static_search_tree::range_update(int query_range_left, int query_range_right, indirection_group **items) {
+    for (int i = query_range_left; i <= query_range_right; ++i) {
+        this->array[i] = items[i]->get_max();
     }
     this->range_update(0, this->height, 0, this->height, query_range_left, query_range_right, this->array);
 }

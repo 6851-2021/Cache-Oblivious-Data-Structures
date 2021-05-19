@@ -41,18 +41,25 @@ clean_sst:
 	rm -f test_co_sst test_ca_sst test_built_co_sst test_simple_sst test_built_co_sst test_map_rep_sst
 	rm -f perf_sst perf_simple_sst perf_co_sst perf_ca_sst perf_built_co_sst perf_map_rep_sst
 
+IND_GRP_DIR = indirection_group
+
+test_indirection_group: ${IND_GRP_DIR}/indirection_group.h ${IND_GRP_DIR}/indirection_group.cpp ${IND_GRP_DIR}/test_indirection_group.cpp
+	g++ -g -DDEBUG -Og -ggdb -Wno-attributes ${IND_GRP_DIR}/indirection_group.cpp ${IND_GRP_DIR}/test_indirection_group.cpp -o ./test_indirection_group
+
+clean_indirection:
+	rm -f test_indirection_group
 
 DST_DIR = dynamic_search_trees
 OFM_DIR = ordered-file-maintenance-in-c
 
-test_co_dst: ${SST_DIR}/static_search_trees.h ${SST_DIR}/static_search_trees.cpp ${DST_DIR}/co_dynamic_search_tree.h ${DST_DIR}/co_dynamic_search_tree.cpp ${DST_DIR}/test_co_dst.cpp ${OFM_DIR}/OrderedFileMaintenance.h ${OFM_DIR}/OrderedFileMaintenance.cpp
-	g++ ${CXXFLAGS} ${SST_DIR}/static_search_trees.cpp ${DST_DIR}/co_dynamic_search_tree.cpp ${DST_DIR}/test_co_dst.cpp ${OFM_DIR}/OrderedFileMaintenance.cpp -o ./test_co_dst 
+test_co_dst: ${SST_DIR}/static_search_trees.h ${SST_DIR}/static_search_trees.cpp ${DST_DIR}/co_dynamic_search_tree.h ${DST_DIR}/co_dynamic_search_tree.cpp ${DST_DIR}/test_co_dst.cpp ${IND_GRP_DIR}/indirection_group.h ${IND_GRP_DIR}/indirection_group.cpp ${OFM_DIR}/OrderedFileMaintenance.h ${OFM_DIR}/OrderedFileMaintenance.cpp
+	g++ ${CXXFLAGS} ${SST_DIR}/static_search_trees.cpp ${DST_DIR}/co_dynamic_search_tree.cpp ${DST_DIR}/test_co_dst.cpp ${OFM_DIR}/OrderedFileMaintenance.cpp ${IND_GRP_DIR}/indirection_group.cpp -o ./test_co_dst 
 
-perf_time_dst: ${SST_DIR}/static_search_trees.h ${SST_DIR}/static_search_trees.cpp ${DST_DIR}/co_dynamic_search_tree.h ${DST_DIR}/co_dynamic_search_tree.cpp ${DST_DIR}/perf_time_dst.cpp ${OFM_DIR}/OrderedFileMaintenance.h ${OFM_DIR}/OrderedFileMaintenance.cpp
-	g++ ${CXXFLAGS} ${SST_DIR}/static_search_trees.cpp ${DST_DIR}/co_dynamic_search_tree.cpp ${DST_DIR}/perf_time_dst.cpp ${OFM_DIR}/OrderedFileMaintenance.cpp -o ./perf_time_dst 
+perf_time_dst: ${SST_DIR}/static_search_trees.h ${SST_DIR}/static_search_trees.cpp ${DST_DIR}/co_dynamic_search_tree.h ${DST_DIR}/co_dynamic_search_tree.cpp ${DST_DIR}/perf_time_dst.cpp ${IND_GRP_DIR}/indirection_group.h ${IND_GRP_DIR}/indirection_group.cpp ${OFM_DIR}/OrderedFileMaintenance.h ${OFM_DIR}/OrderedFileMaintenance.cpp
+	g++ ${CXXFLAGS} ${SST_DIR}/static_search_trees.cpp ${DST_DIR}/co_dynamic_search_tree.cpp ${DST_DIR}/perf_time_dst.cpp ${OFM_DIR}/OrderedFileMaintenance.cpp ${IND_GRP_DIR}/indirection_group.cpp -o ./perf_time_dst 
 
-perf_co_dst: ${SST_DIR}/static_search_trees.h ${SST_DIR}/static_search_trees.cpp ${DST_DIR}/co_dynamic_search_tree.h ${DST_DIR}/co_dynamic_search_tree.cpp ${DST_DIR}/perf_co_dst.cpp ${OFM_DIR}/OrderedFileMaintenance.h ${OFM_DIR}/OrderedFileMaintenance.cpp
-	g++ ${CXXFLAGS} ${SST_DIR}/static_search_trees.cpp ${DST_DIR}/co_dynamic_search_tree.cpp ${DST_DIR}/perf_co_dst.cpp ${OFM_DIR}/OrderedFileMaintenance.cpp -o ./perf_co_dst 
+perf_co_dst: ${SST_DIR}/static_search_trees.h ${SST_DIR}/static_search_trees.cpp ${DST_DIR}/co_dynamic_search_tree.h ${DST_DIR}/co_dynamic_search_tree.cpp ${DST_DIR}/perf_co_dst.cpp ${IND_GRP_DIR}/indirection_group.h ${IND_GRP_DIR}/indirection_group.cpp ${OFM_DIR}/OrderedFileMaintenance.h ${OFM_DIR}/OrderedFileMaintenance.cpp
+	g++ ${CXXFLAGS} ${SST_DIR}/static_search_trees.cpp ${DST_DIR}/co_dynamic_search_tree.cpp ${DST_DIR}/perf_co_dst.cpp ${OFM_DIR}/OrderedFileMaintenance.cpp ${IND_GRP_DIR}/indirection_group.cpp -o ./perf_co_dst 
 
 perf_std_set: ${DST_DIR}/perf_std_set.cpp
 	g++ ${CXXFLAGS} ${DST_DIR}/perf_std_set.cpp -o ./perf_std_set
@@ -82,14 +89,5 @@ perf_naive_matrix_walker: ${MW_DIR}/matrix_walker.h ${MW_DIR}/matrix_walker.cpp 
 clean_matrix_walker:
 	rm -f test_matrix_walker 
 	rm -f perf_co_matrix_walker perf_naive_matrix_walker
-
-
-IND_GRP_DIR = indirection_group
-
-test_indirection_group: ${IND_GRP_DIR}/indirection_group.h ${IND_GRP_DIR}/indirection_group.cpp ${IND_GRP_DIR}/test_indirection_group.cpp
-	g++ -g -DDEBUG -Og -ggdb -Wno-attributes ${IND_GRP_DIR}/indirection_group.cpp ${IND_GRP_DIR}/test_indirection_group.cpp -o ./test_indirection_group
-
-clean_indirection:
-	rm -f test_indirection_group
 
 clean: clean_sst clean_matrix_walker clean_dst clean_indirection

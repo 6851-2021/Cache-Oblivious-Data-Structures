@@ -72,11 +72,20 @@ class indirection_group {
         bool merge_and_split(indirection_group *that);
 
         /**
-         * @brief Ge the maximum value in the group
+         * @brief Get the maximum value in the group
          * 
          * @return int  the max value
          */
         int get_max();
+
+        /**
+         * @brief Get the successor element in this group lower bounding value.
+         *
+         * @param value  value to lower bound
+         *
+         * @return successor of value or -1 if value > max_value
+         */
+        int lower_bound(int value);
 
         /**
          * @brief check if the current size of the group exceeds the capacity.
@@ -93,6 +102,26 @@ class indirection_group {
          * @return false  otherwise
          */
         bool empty();
+
+        /**
+         * @brief swap that indirection_group into this.
+         *
+         * @return that  indirection_group to copy into this
+         */
+        void swap(indirection_group *that);
+
+        /**
+         * @brief clear this indirection group.
+         *
+         */
+        void clear();
+
+        /**
+         * @brief reset the capacity of this group to new_cap.
+         *
+         * @param new_cap  new capacity of this group
+         */
+        void reset_capacity(int new_cap);
 
         /**
          * @brief calculates the size of the group

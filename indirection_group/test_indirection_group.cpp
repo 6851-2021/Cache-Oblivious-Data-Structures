@@ -107,10 +107,43 @@ void test_merge_and_split_3() {
     cout << "test_merge_and_split_3: Success!\n";
 }
 
+void test_lower_bound() {
+    indirection_group grp(10);
+
+    assert(grp.insert(5) == false);
+    assert(grp.get_max() == 5);
+    assert(grp.overloaded() == false);
+    assert(grp.lower_bound(4) == 5);
+    assert(grp.lower_bound(1) == 5);
+    assert(grp.lower_bound(5) == 5);
+    assert(grp.lower_bound(6) == -1);
+
+    assert(grp.insert(2) == false);
+    assert(grp.get_max() == 5);
+    assert(grp.overloaded() == false);
+    assert(grp.lower_bound(4) == 5);
+    assert(grp.lower_bound(1) == 2);
+    assert(grp.lower_bound(5) == 5);
+    assert(grp.lower_bound(6) == -1);
+
+    assert(grp.insert(8) == false);
+    assert(grp.get_max() == 8);
+    assert(grp.overloaded() == false);
+    assert(grp.lower_bound(4) == 5);
+    assert(grp.lower_bound(1) == 2);
+    assert(grp.lower_bound(5) == 5);
+    assert(grp.lower_bound(6) == 8);
+    assert(grp.lower_bound(8) == 8);
+    assert(grp.lower_bound(10) == -1);
+
+    cout << "test_lower_bound: Success!\n";
+}
+
 int main() {
     test_inserts();
     test_splits();
     test_merge_and_split_1();
     test_merge_and_split_2();
     test_merge_and_split_3();
+    test_lower_bound();
 }

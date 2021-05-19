@@ -2,6 +2,7 @@
 #include<math.h>
 #include<vector>
 #include<map>
+#include "../ordered-file-maintenance-in-c/OrderedFileMaintenance.h"
 using namespace std;
 
 const int NOT_FOUND_INDEX = -1;
@@ -197,6 +198,16 @@ class co_static_search_tree {
          * @param items 
          */
         void range_update(int query_range_left, int query_range_right, int *items);
+
+        /**
+         * @brief  Update the a range of values in the array. Only difference here
+         *         is that the passed array is an array of indirection_groups.
+         * 
+         * @param query_range_left  the left side of the range (inclusive)
+         * @param query_range_right  the right side of the range (inclusive)
+         * @param items  array of indirection groups
+         */
+        void range_update(int query_range_left, int query_range_right, indirection_group **items);
 };
 
 class built_co_static_search_tree {

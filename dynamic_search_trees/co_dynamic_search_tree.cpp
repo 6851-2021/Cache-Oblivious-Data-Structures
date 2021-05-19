@@ -38,5 +38,5 @@ int co_dynamic_serach_tree::get_successor(int value) {
     if(index == -1) {
         return index;
     }
-    return this->list.items[index];
+    return this->list.items[index]->lower_bound(value);
 }

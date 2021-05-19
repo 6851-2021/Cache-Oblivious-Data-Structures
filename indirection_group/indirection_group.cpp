@@ -66,12 +66,37 @@ int indirection_group::get_max() {
     return this->max_value;
 }
 
+int indirection_group::lower_bound(int value) {
+    if (value > this->max_value) return -1;
+    int cur_successor = this->max_value;
+    for (int elem : this->vec) {
+        if (elem >= value && elem < cur_successor) cur_successor = elem;
+    }
+    return cur_successor;
+}
+
 bool indirection_group::overloaded() {
     return this->vec.size() > this->capacity;
 }
 
+void indirection_group::swap(indirection_group *that) {
+    this->max_value = that->max_value;
+    that->max_value = INT32_MIN;
+    this->vec.clear();
+    this->vec.swap(that->vec);
+}
+
+void indirection_group::clear() {
+    this->max_value = INT32_MIN;
+    this->vec.clear();
+}
+
 bool indirection_group::empty() {
     return this->vec.empty();
+}
+
+void indirection_group::reset_capacity(int new_cap) {
+    this->capacity = new_cap;
 }
 
 int indirection_group::size() {
