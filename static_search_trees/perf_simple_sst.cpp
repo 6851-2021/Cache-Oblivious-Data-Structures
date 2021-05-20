@@ -34,34 +34,19 @@ void test(int n, int Q, bool recursive) {
 }
 
 void run(bool recursive) {    
-    if(recursive) {
-        cout << "Recursive Implementation:\n";
-    } else{
-        cout << "Iterative Implementation:\n";
-    }
     // I think it's better to first let the user specify the inputs,
     // then make 10 independent runs on the same inputs n and Q, and
     // measure the runtime of each separately. We need an average of
     // runtimes, not the total runtime - maybe I'm wrong about this?
-    cout << "Enter values for n and Q: ";
     int n, Q;
     cin >> n >> Q;
-    double total = 0.0;
-    for (int run = 1; run <= num_runs; ++run)
-    {
-        srand(0);
-        chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-        cout << "Run number: " << run << endl;
-        test(n, Q, recursive);
-        chrono::steady_clock::time_point end = chrono::steady_clock::now();
-        cout << "Time difference = " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
-        total += chrono::duration_cast<chrono::microseconds>(end - begin).count();
-    }
-    cout << "Done." << endl;
-    cout << "Average runtime on " << num_runs << " is: " << total / num_runs << endl;
+    chrono::steady_clock::time_point begin = chrono::steady_clock::now();
+    test(n, Q, recursive);
+    chrono::steady_clock::time_point end = chrono::steady_clock::now();
+    cout << "Time difference = " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
 }
 
 int main(){
-    // srand(10);
+    srand(10);
     run(sst_recursive_falg);
 }

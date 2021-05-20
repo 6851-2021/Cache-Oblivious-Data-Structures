@@ -57,7 +57,7 @@ def plot_barchart_against(dfs: list, y_axis="L1-dcache-load-misses", test_names=
 
 def plot_lines_against(dfs: list, x_axis="n", y_axis="L1-dcache-load-misses", test_names=None, save_file="lines.png"):
     ys = [[] for i in range(len(dfs))]
-    fig, ax = plt.subplots(figsize=(20,10))
+    fig, ax = plt.subplots()
     for i in range(len(dfs)):
         label = ""
         df_name, df = dfs[i]
@@ -72,8 +72,8 @@ def plot_lines_against(dfs: list, x_axis="n", y_axis="L1-dcache-load-misses", te
     fig.savefig(save_file)
 
 def record_program(program_name, log_folder=None):
-    Ns = list(range(1000, 20000, 1000))
-    Qs = [100000]
+    Ns = list(range(100000, 1000000, 100000)) + list(range(1000000, 10000000, 1000000))
+    Qs = [100000000]
     perf = PerfObj()
     for n in Ns:
         for q in Qs:
@@ -111,23 +111,22 @@ def get_log_df(path):
     return ret_df
 
 def plot(programs):
-    names = [name.replace('./', '') for name in programs]
+    names = [name for name in programs]
     folders = [f"logs/{name}/" for name in names]
     dfs = []
     for name, folder in zip(names, folders):
         df = get_log_df(folder)
-        dfs.append((name, df))
+        dfs.append((name.replace('./perf_', ''), df))
     plot_lines_against(dfs, x_axis="n", y_axis="L1-dcache-load-misses")
 
 if __name__ == '__main__':
     if len(argv) > 1:
         record(argv[1:])
     else:
-        programs = ["./perf_co_sst", "./perf_ca_sst", "./perf_built_co_sst", "./perf_simple_sst", "./perf_map_rep_sst"]
-        # programs = ["./perf_std_set", "./perf_co_dst"]
+        
+        programs = ["./perf_std_set", "./perf_co_dst"]
+        # programs = ["./perf_co_sst", "./perf_ca_sst", "./perf_built_co_sst", "./perf_simple_sst_recursive", "./perf_simple_sst_iterative"]
         # programs = ["./co_matrix_walker", "./naive_matrix_walker"]
-        # main(programs)
-        # print("Error :| replace this code or pass arguments")
-        plot([i.replace("perf_", "") for i in programs])
-
+        record(programs)
+        plot(programs)
 

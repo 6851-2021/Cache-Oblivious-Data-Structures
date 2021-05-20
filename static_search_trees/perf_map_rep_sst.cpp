@@ -37,13 +37,9 @@ void test(int n, int Q) {
 int main(){
     srand(10);
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int run = 0; run < num_runs; ++run)
-    {
-        cout << "Run " << run << ": ";
-        int n, Q;
-        cin >> n >> Q;
-        test(n, Q);
-    }
+    int n, Q;
+    cin >> n >> Q;
+    test(n, Q);
     chrono::steady_clock::time_point end = chrono::steady_clock::now();
     cout << "Time difference = " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
 }

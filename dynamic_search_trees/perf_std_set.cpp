@@ -2,6 +2,8 @@
 #include <random>
 #include <iostream>
 
+const int rand_reset_const = 10000;
+
 void test(int max_value, int Q) {
     std::set<int> tree;
     for (int i = 0; i <= max_value; i++){
@@ -10,6 +12,11 @@ void test(int max_value, int Q) {
     while (Q--)
     {
         int query_type = rand() % 12;
+
+        if (Q % rand_reset_const == 0) {
+            srand(Q / rand_reset_const);
+        }
+
         if (query_type < 4)
         {
             int value = rand() % max_value;
@@ -29,6 +36,7 @@ void test(int max_value, int Q) {
 }
 
 int main() {
+    srand(1);
     int n, Q;
     std::cin >> n >> Q;
     test(n, Q);

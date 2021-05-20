@@ -38,20 +38,11 @@ int main(){
     // then make 10 independent runs on the same inputs n and Q, and
     // measure the runtime of each separately. We need an average of
     // runtimes, not the total runtime - maybe I'm wrong about this?
-    cout << "Enter values for n and Q: ";
+    srand(10);
+    chrono::steady_clock::time_point begin = chrono::steady_clock::now();
     int n, Q;
     cin >> n >> Q;
-    double total = 0.0;
-    for (int run = 1; run <= num_runs; ++run)
-    {
-        srand(0);
-        chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-        cout << "Run number: " << run << endl;
-        test(n, Q);
-        chrono::steady_clock::time_point end = chrono::steady_clock::now();
-        cout << "Time difference = " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
-        total += chrono::duration_cast<chrono::microseconds>(end - begin).count();
-    }
-    cout << "Done." << endl;
-    cout << "Average runtime on " << num_runs << " is: " << total / num_runs << endl;
+    test(n, Q);
+    chrono::steady_clock::time_point end = chrono::steady_clock::now();
+    cout << "Time difference = " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
 }

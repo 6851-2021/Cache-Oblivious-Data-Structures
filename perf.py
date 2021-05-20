@@ -55,18 +55,19 @@ class PerfObj:
         return self.df
 
 if __name__ == '__main__':
-    perf = PerfObj()
-    perf.record_cache("./perf_co_sst")
-    perf.record_cache("./perf_sst")
-    perf.record_cache("./perf_ca_sst")
-    perf.record_cache("./perf_built_co_sst")
-    print(perf)
-    # if len(argv) > 1:
-    #     perf = PerfObj()
-    #     for i in range(1):
-    #         # perf.record_cache(argv[1])
-            
-    #     print(perf) 
-    # else:
-    #     print("Usage python perf.py <program>")
+    # perf = PerfObj()
+    # perf.record_cache("./perf_co_sst")
+    # perf.record_cache("./perf_sst")
+    # perf.record_cache("./perf_ca_sst")
+    # perf.record_cache("./perf_built_co_sst")
+    # print(perf)
+    if len(argv) > 3:
+        perf = PerfObj()
+        program_name = argv[1]
+        n = int(argv[2])
+        q = int(argv[3])
+        perf.record_cache(program_name, n, q)
+        print(perf) 
+    else:
+        print("Usage python perf.py <program> <n> <q>")
     
