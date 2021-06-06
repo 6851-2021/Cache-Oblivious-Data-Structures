@@ -1,6 +1,12 @@
-# Cache-Oblivious-Btrees
+# Cache-Oblivious Data Structures
 
-Contains cache oblivious and conventional implementations of static search trees, dynamic search trees and matrix walker.
+This project contains cache-oblivious and conventional (cache-aware / external-memory)
+C++ implementations of the following data structures:
+
+* Static and dynamic search trees (see [this video lecture](http://courses.csail.mit.edu/6.851/spring21/lectures/L07.html))
+* Matrix walking/traversal (see [pset 5](http://courses.csail.mit.edu/6.851/spring21/psets/ps5.pdf))
+
+## Usage
 
 To compile the code simply run:
 
@@ -22,5 +28,3 @@ For example to run n = 10000, q = 100000 on normal static search trees:
 For cache-oblivious static search trees:
 
 ```python3 perf.py ./perf_co_sst 10000 100000```
-
-
